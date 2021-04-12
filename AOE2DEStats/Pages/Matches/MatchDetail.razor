@@ -1,9 +1,71 @@
 ﻿@page "/matches/detail/{Uuid}"
+@inject HttpClient Http
 <h3>MatchDetail</h3>
+
+@if (Match == null)
+{
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row p-2 border">
+            <div class="col-md-4 p-2 border">
+                <div class="card">
+                    <div class="card-header">
+                        @GeneralData.GameTypes.Where(x => x.Id == Match.GameType).Select(x => x.Name).FirstOrDefault()
+                    </div>
+                    <div class="card-img">
+                        <img src="/img/ao2demaps/@string.Format($"{Match.MapType}.png")" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <span>@string.Format($"{Match.Players[0].Name} vs {Match.Players[1].Name}")</span>
+                        <span>@GeneralData.MapTypes.Where(x => x.Id == Match.MapType).Select(x => x.Name).FirstOrDefault()</span>
+                    </div>
+                    <div class="card-footer">
+                        @Match.Server
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 p-2 border">
+                <div class="row border">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    
+}
 
 @code {
     [Parameter]
     public string Uuid { get; set; }
 
-    //https://aoe2.net/api/match?uuid=66ec2575-5ee4-d241-a1fc-d7ffeffb48b6
+    //?uuid=66ec2575-5ee4-d241-a1fc-d7ffeffb48b6
+
+    private string JsonResultMatch;
+    //private Models.LastMatchResult LastMatches;
+    private Models.Match Match;
+    private const string GAME = "aoe2de";
+    private const string API_MATCH = "https://aoe2.net/api/match";
+
+    private string JsonResultStrings;
+    private Models.GeneralData GeneralData;
+    private const string LANG = "en";
+    private const string API_STRINGS = "https://aoe2.net/api/strings";
+    protected override async Task OnInitializedAsync()
+    {
+        JsonResultStrings = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={LANG}");
+        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResultStrings);
+
+
+        JsonResultMatch = await Http.GetStringAsync($"{API_MATCH}?uuid={Uuid}");
+        Match = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Match>(JsonResultMatch);
+    }
 }

@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Enums\" />
+    <Folder Include="wwwroot\img\aoe2decivs\" />
   </ItemGroup>
 
 </Project>

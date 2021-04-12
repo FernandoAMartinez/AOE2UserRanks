@@ -6,82 +6,99 @@
 
     <div class="row">
         <div class="col-6">
-            <input placeholder="Select a SteamId..." @bind-value="steamId"  />
+            <input placeholder="Select a SteamId..." @bind-value="steamId" />
         </div>
         <div class="col-6">
             <button class="btn btn-primary" @onclick="GetLastMatches">Matches</button>
         </div>
     </div>
 
-     @*@if(LastMatches!= null)
-     {
-         <span>@LastMatches.Name - @LastMatches.Country</span>
-         <p>@LastMatches.LastMatch.MatchId</p>
-         <a href="/matches/detail/@LastMatches.LastMatch.MatchUUID">@LastMatches.LastMatch.MatchUUID</a>
-         <div class="container-fluid">
-             <div class="row col-12 text-center">
-                 <span>@LastMatches.LastMatch.Name - @LastMatches.LastMatch.Server</span>
-             </div>
-             <div class="row">
-                 <div class="col-2 border">
-                     <span>@LastMatches.LastMatch.Players[0].Name</span>
-                 </div>
-                 <div class="col-2 border">
-                     <span>@LastMatches.LastMatch.Players[1].Name</span>
-                 </div>
-             </div>
-         </div>
-     }*@
+    @*@if(LastMatches!= null)
+        {
+            <span>@LastMatches.Name - @LastMatches.Country</span>
+            <p>@LastMatches.LastMatch.MatchId</p>
+            <a href="/matches/detail/@LastMatches.LastMatch.MatchUUID">@LastMatches.LastMatch.MatchUUID</a>
+            <div class="container-fluid">
+                <div class="row col-12 text-center">
+                    <span>@LastMatches.LastMatch.Name - @LastMatches.LastMatch.Server</span>
+                </div>
+                <div class="row">
+                    <div class="col-2 border">
+                        <span>@LastMatches.LastMatch.Players[0].Name</span>
+                    </div>
+                    <div class="col-2 border">
+                        <span>@LastMatches.LastMatch.Players[1].Name</span>
+                    </div>
+                </div>
+            </div>
+        }*@
 </div>
 
 <div class="container-fluid">
     <div class="row row-cols-1 row-cols-md-2 g-4">
         @*
 
-        @if (LastMatches != null)
-        {
-            @for (int i = 0; i < 5; i++)
+            @if (LastMatches != null)
             {
-                <div class="col">
-                    <div class="card text-white bg-dark border-light">
-                        <a href="/matches/detail/@LastMatches.LastMatch.MatchUUID">
-                            <img src="/img/ao2demaps/arabia.png" class="card-img-top" alt="...">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center font-weight-bold">
-                                @GeneralData.MapTypes.Where(x => x.Id == LastMatches.LastMatch.MapType).Select(x => x.Name).FirstOrDefault()
-                            </h5>
-                            <h6 class="card-subtitle text-center">
-                                @string.Format($"{@LastMatches.LastMatch.Players[0].Name}({@LastMatches.LastMatch.Players[0].Rating}) vs {@LastMatches.LastMatch.Players[1].Name}({@LastMatches.LastMatch.Players[1].Rating})")
-                            </h6>
+                @for (int i = 0; i < 5; i++)
+                {
+                    <div class="col">
+                        <div class="card text-white bg-dark border-light">
+                            <a href="/matches/detail/@LastMatches.LastMatch.MatchUUID">
+                                <img src="/img/ao2demaps/arabia.png" class="card-img-top" alt="...">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title text-center font-weight-bold">
+                                    @GeneralData.MapTypes.Where(x => x.Id == LastMatches.LastMatch.MapType).Select(x => x.Name).FirstOrDefault()
+                                </h5>
+                                <h6 class="card-subtitle text-center">
+                                    @string.Format($"{@LastMatches.LastMatch.Players[0].Name}({@LastMatches.LastMatch.Players[0].Rating}) vs {@LastMatches.LastMatch.Players[1].Name}({@LastMatches.LastMatch.Players[1].Rating})")
+                                </h6>
 
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
         *@
 
         @if (LastMatchesV2 != null)
         {
-            foreach (var match in LastMatchesV2)
+            foreach (var match in LastMatchesV2.Where(x => x.Ranked == true).ToList())
             {
 
                 <div class="col">
-                    <div class="card text-white bg-dark border-light">
+                    <div class="card text-white bg-dark border-light text-center">
+                        <div class="card-header">
+                            @GeneralData.GameTypes.Where(x => x.Id == match.GameType).Select(x => x.Name).FirstOrDefault()
+
+                            @if (match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == null)
+                            {
+                                <span class="badge bg-warning text-dark">Drop</span>
+                            }
+                            else if (match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == true)
+                            {
+                                <span class="badge bg-success">Won</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Lost</span>
+                            }
+
+                        </div>
                         <a href="/matches/detail/@match.MatchUUID">
                             <img src="/img/ao2demaps/@string.Format($"{match.MapType}.png")" class="card-img-top" alt="...">
                         </a>
                         <div class="card-body">
-                            <h5 class="card-title text-center font-weight-bold">
+                            <h5 class="card-title  font-weight-bold">
                                 @GeneralData.MapTypes.Where(x => x.Id == match.MapType).Select(x => x.Name).FirstOrDefault()
                             </h5>
                             <h6 class="card-subtitle text-center">
                                 @string.Format($"{match.Players[0].Name}({match.Players[0].Rating}) vs {match.Players[1].Name}({match.Players[1].Rating})")
                             </h6>
                             @*<p class="card-text">
-                                This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-                            </p>*@
+                                    This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
+                                </p>*@
                         </div>
                     </div>
                 </div>
@@ -102,12 +119,13 @@
     private const string GAME = "aoe2de";
     private const string API_LAST_MATCHES = "https://aoe2.net/api/player/lastmatch";
 
-    private int countMatches = 5;
+    private int countMatches = 50;
     private const string API_LAST_MATCHES_V2 = "https://aoe2.net/api/player/matches";
 
     private async void GetLastMatches()
     {
         steamId = "76561198074662559";
+        //steamId = "76561198088251629";
         //JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES}?game={GAME}&steam_id={steamId}");
         //LastMatches = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LastMatchResult>(JsonResultMatches);
 
