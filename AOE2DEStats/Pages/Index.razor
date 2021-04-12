@@ -1,0 +1,49 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+<div class="container">
+    @if(GeneralData == null)
+    {
+        <span>Converting Object...</span>
+    }
+    else
+    {
+        foreach (var civ in GeneralData.Civilizations)
+        {
+            <span>@string.Format($"{civ.Id}: {civ.Name}").ToString(); </span>
+        }
+    }
+</div>
+
+<div class="container-fluid">
+    <input placeholder="Search username..." @bind-value="requestedUsername" />
+    @*<InputText id="username" @bind-Value="requestedUsername"></InputText>*@   
+    <button class="btn btn-primary" @onclick="SearchUser">Search User</button>
+</div>
+
+@code{
+    private string requestedUsername;
+    private string JsonResult;
+    private Models.GeneralData GeneralData;
+    private const string LANG = "en";
+    private const string GAME = "aoe2de";
+    private const string API_STRINGS = "https://aoe2.net/api/strings";
+    protected override async Task OnInitializedAsync()
+    {
+        JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={LANG}");
+        //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
+        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
+    }
+
+    private void SearchUser()
+    {
+        
+    }
+}
