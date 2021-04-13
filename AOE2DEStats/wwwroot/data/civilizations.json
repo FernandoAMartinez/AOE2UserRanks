@@ -1,0 +1,152 @@
+{
+  "civ": [
+    {
+      "id": 0,
+      "string": "Aztecs"
+    },
+    {
+      "id": 1,
+      "string": "Berbers"
+    },
+    {
+      "id": 2,
+      "string": "Britons"
+    },
+    {
+      "id": 3,
+      "string": "Bulgarians"
+    },
+    {
+      "id": 4,
+      "string": "Burgundians"
+    },
+    {
+      "id": 5,
+      "string": "Burmese"
+    },
+    {
+      "id": 6,
+      "string": "Byzantines"
+    },
+    {
+      "id": 7,
+      "string": "Celts"
+    },
+    {
+      "id": 8,
+      "string": "Chinese"
+    },
+    {
+      "id": 9,
+      "string": "Cumans"
+    },
+    {
+      "id": 10,
+      "string": "Ethiopians"
+    },
+    {
+      "id": 11,
+      "string": "Franks"
+    },
+    {
+      "id": 12,
+      "string": "Goths"
+    },
+    {
+      "id": 13,
+      "string": "Huns"
+    },
+    {
+      "id": 14,
+      "string": "Incas"
+    },
+    {
+      "id": 15,
+      "string": "Indians"
+    },
+    {
+      "id": 16,
+      "string": "Italians"
+    },
+    {
+      "id": 17,
+      "string": "Japanese"
+    },
+    {
+      "id": 18,
+      "string": "Khmer"
+    },
+    {
+      "id": 19,
+      "string": "Koreans"
+    },
+    {
+      "id": 20,
+      "string": "Lithuanians"
+    },
+    {
+      "id": 21,
+      "string": "Magyars"
+    },
+    {
+      "id": 22,
+      "string": "Malay"
+    },
+    {
+      "id": 23,
+      "string": "Malians"
+    },
+    {
+      "id": 24,
+      "string": "Mayans"
+    },
+    {
+      "id": 25,
+      "string": "Mongols"
+    },
+    {
+      "id": 26,
+      "string": "Persians"
+    },
+    {
+      "id": 27,
+      "string": "Portuguese"
+    },
+    {
+      "id": 28,
+      "string": "Saracens"
+    },
+    {
+      "id": 29,
+      "string": "Sicilians"
+    },
+    {
+      "id": 30,
+      "string": "Slavs"
+    },
+    {
+      "id": 31,
+      "string": "Spanish"
+    },
+    {
+      "id": 32,
+      "string": "Tatars"
+    },
+    {
+      "id": 33,
+      "string": "Teutons"
+    },
+    {
+      "id": 34,
+      "string": "Turks"
+    },
+    {
+      "id": 35,
+      "string": "Vietnamese"
+    },
+    {
+      "id": 36,
+      "string": "Vikings"
+    }
+  ]
+}

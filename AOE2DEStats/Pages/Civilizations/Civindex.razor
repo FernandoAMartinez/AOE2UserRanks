@@ -1,0 +1,51 @@
+﻿@page  "/civilizations"
+@inject HttpClient Http
+
+<h3>Civindex</h3>
+<div class="container">
+    @if (GeneralData == null)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="card-group">
+                @foreach (var civ in GeneralData.Civilizations)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="card text-center text-dark">
+                            <div class="card-header"> @civ.Name </div>
+                            <div class="card-img">
+                                <img src="@string.Format($"/img/aoe2decivs/{civ.Name}.png")" />
+                            </div>
+                            <div class="card-body row">
+                                <div class="col border">Win</div>
+                                <div class="col border">Lose</div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="@string.Format($"https://aoe2techtree.net/#{civ.Name}")">Tech Tree</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+@code {
+    [Parameter]
+    public string Lang { get; set; }
+
+    private string JsonResult;
+    private Models.GeneralData GeneralData;
+    private const string GAME = "aoe2de";
+    private const string API_STRINGS = "https://aoe2.net/api/strings";
+    protected override async Task OnInitializedAsync()
+    {
+        JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={Lang}");
+        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
+    }
+}

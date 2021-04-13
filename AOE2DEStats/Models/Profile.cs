@@ -54,6 +54,8 @@ namespace AOE2DEStats.Models
         public int? Color { get; set; }
         [JsonProperty("team")]
         public int? Team { get; set; }
+        [JsonProperty("civ")]
+        public int? Civilization { get; set; }
         [JsonProperty("won")]
         public bool? Won { get; set; }
     }

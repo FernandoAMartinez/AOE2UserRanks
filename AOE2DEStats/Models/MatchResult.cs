@@ -67,7 +67,7 @@ namespace AOE2DEStats.Models
         [JsonProperty("resources")]
         public int? Resources { get; set; }
         [JsonProperty("rms")]
-        public int? Rms { get; set; }
+        public string? Rms { get; set; }
         [JsonProperty("scenario")]
         public int? Scenario { get; set; }
         [JsonProperty("server")]

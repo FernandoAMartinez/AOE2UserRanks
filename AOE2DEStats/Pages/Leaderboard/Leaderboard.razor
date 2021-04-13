@@ -4,6 +4,8 @@
 <h3>Leaderboard</h3>
 <div class="container-fluid">
     <div class="container-fluid">
+        <div class="row">
+
         <div class="col-3">
             Max result
             <input placeholder="Set max result..." @bind-value="countResult" />
@@ -13,11 +15,17 @@
                 <input placeholder="Set start..." @bind-value="startResult" />
             </div>*@
         <div class="col-3">
-            Leaderboard: 3 - Random Map
-            <input placeholder="Select a Leaderboard..." @bind-value="leaderboardSelect" />
+            <select class="custom-select-lg" name="select" @bind="leaderboardSelect">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+            </select>
+            @*<input placeholder="Select a Leaderboard..." @bind-value="leaderboardSelect" />*@
         </div>
         <div class="col-3">
             <button class="btn btn-primary" @onclick="RetrieveLeaderboard">Leaderboard</button>
+        </div>
         </div>
     </div>
 
@@ -53,7 +61,9 @@
                 {
                     <tr>
                         <td>@profile.Rank</td>
-                        <td>@profile.Name</td>
+                        <td>
+                        <a href="@string.Format($"/profile/{profile.SteamId}")">@profile.Name</a>
+                        </td>
                         <td>@profile.Rating</td>
                         <td><img src="https://www.countryflags.io/@profile.Country/flat/32.png"></td>
                         <td>@profile.Games</td>
