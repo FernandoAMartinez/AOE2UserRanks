@@ -1,69 +1,107 @@
-﻿@page "/profile/{steamId}/matches"
+﻿@page "/profile/{profile_id}/matches"
 @inject HttpClient Http
 <h3>UserMatches</h3>
 
-<table class="table table-dark table-hover table-striped shadow-sm">
-    <thead>
-        <tr>
-            <th>Leaderboard</th>
-            <th>Rating</th>
-            <th>Match</th>
-            <th>Map</th>
-            <th>Server</th>
-            <th>Result</th>
-        </tr>
-    </thead>
+<div class="table-responsive">
 
-    @if (LastMatchesV2 == null)
-    {
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden"></span>
-        </div>
-    }
-    else
-    {
+    <table class="table table-dark table-hover table-striped shadow-sm">
+        <thead>
+            <tr>
+                <th class="text-center">Leaderboard</th>
+                <th class="text-center">Rating</th>
+                <th class="text-center">Match</th>
+                <th class="text-center">Map</th>
+                <th class="text-center">Server</th>
+                <th class="text-center">Result</th>
+            </tr>
+        </thead>
 
-        <tbody class="table-hover">
-            @foreach (var match in LastMatchesV2.Where(x => x.Ranked == true).ToList())
-            {
-                @*@if (@match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == true)
+        @if (LastMatchesV2 == null)
+        {
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        }
+        else
+        {
+
+            <tbody class="table-hover">
+                @foreach (var match in LastMatchesV2.Where(x => x.Ranked == true).ToList())
                 {
-                    cssClassWin = "font-weight-bold";
-                }*@
-                <tr class="@cssClassWin">
-                    <td>@GeneralData.GameTypes.Where(x => x.Id == match.GameType).Select(x => x.Name).FirstOrDefault()</td>
-                    <td>@match.Players.Where(x => x.SteamId == steamId).Select(x => x.Rating).FirstOrDefault()</td>
-                    <td>
-                        <div class="row">
-                            <img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == match.Players[0].Civilization).Select(x => x.Name).FirstOrDefault()}.png")" sizes="32" />
-                            @string.Format($"{match.Players[0].Name} vs {match.Players[1].Name}")
-                            <img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == match.Players[1].Civilization).Select(x => x.Name).FirstOrDefault()}.png")" sizes="32" />
-                        </div>
-                    </td>
-                    <td>@GeneralData.MapTypes.Where(x => x.Id == match.MapType).Select(x => x.Name).FirstOrDefault()</td>
-                    <td>@match.Server</td>
-                    <td>
-                        @if (match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == null)
+                    @*@if (@match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == true)
                         {
-                            <span class="badge bg-warning text-dark">Drop</span>
-                        }
-                        else if (match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == true)
-                        {
-                            <span class="badge bg-success">Won</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Lost</span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    }
-</table>
+                            cssClassWin = "font-weight-bold";
+                        }*@
+                    <tr class="@cssClassWin">
+                        <td class="text-center">@GeneralData.Leaderboards.Where(x => x.Id == match.LeaderboardId).Select(x => x.Name).FirstOrDefault()</td>
+                        <td class="text-center">
+                            @match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Rating).FirstOrDefault()
+                            
+                        </td>
+                        <td class="text-center">
+                            <div class="row text-center">
+                                <span class="text-center">
+                                    @foreach (var player in match.Players.OrderBy(x => x.Team))
+                                    {
+                                        @if (match.NumSlots.Equals(2))
+                                        {
+                                            @if (player.Slot.Equals(1))
+                                            {
+                                                @player.Name
+                                                <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
+                                                <span> vs. </span>
+                                            }
+                                            else
+                                            {
+                                                <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
+                                                @player.Name
+                                            }
+                                        }
+
+                                        @if (match.NumSlots > 2)
+                                        {
+                                            @player.Name
+                                            <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
+
+                                            @if (player != match.Players.Last())
+                                            {
+                                                <span> vs. </span>
+                                            }
+                                            else { break; }
+                                            @*@foreach (var teamPlayer in match.Players)
+                                            {
+                                            }*@
+                                        }
+                                    }
+
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center">@GeneralData.MapTypes.Where(x => x.Id == match.MapType).Select(x => x.Name).FirstOrDefault()</td>
+                        <td class="text-center">@match.Server</td>
+                        <td class="text-center">
+                            @if (match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Won).FirstOrDefault() == null)
+                            {
+                                <span class="badge bg-warning text-dark">Drop</span>
+                            }
+                            else if (match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Won).FirstOrDefault() == true)
+                            {
+                                <span class="badge bg-success">Won</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Lost</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+</div>
 @code {
     [Parameter]
-    public string steamId { get; set; }
+    public string profile_id { get; set; }
     //private string steamId;
     private string JsonResultMatches;
     //private Models.LastMatchResult LastMatches;
@@ -91,8 +129,16 @@
         //JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES}?game={GAME}&steam_id={steamId}");
         //LastMatches = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LastMatchResult>(JsonResultMatches);
 
-        JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES_V2}?game={GAME}&steam_id={steamId}&count={countMatches}");
+        //JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES_V2}?game={GAME}&steam_id={steamId}&count={countMatches}");
+        JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES_V2}?game={GAME}&profile_id={profile_id}&count={countMatches}");
         LastMatchesV2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Match[]>(JsonResultMatches);
     }
 
+    //private int GetDeltaRating(int previousRating, int currentRating) => currentRating - previousRating;
+    private int? GetDeltaRating(int? previousRating, int? currentRating)
+    {
+        if (previousRating == null) previousRating = 0;
+        if (currentRating == null) currentRating = 0;
+        return currentRating - previousRating;
+    }
 }

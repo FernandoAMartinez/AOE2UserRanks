@@ -1,37 +1,127 @@
-﻿@page "/profile"
-@page "/profile/{steamId}"
-
+﻿@page "/profile/{profile_id}"
+@inject HttpClient Http
 <h3>Profile</h3>
 
-<div class="container-fluid">
-    <div class="row p-2 border">
-        <div class="col-md-4 p-2 border">
-            <div class="card-header">
-                @steamId
+@*<div class="container-fluid">
+        <div class="row p-2 border">
+            <div class="col-md-4 p-2 border">
+                <div class="card bg-dark text-white">
+
+                    <div class="card-header">
+                        @steamId
+                    </div>
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="~/icon-512.png" />
+                        </div>
+                        <div class="card-body">
+                            <span class="oi-person">KrapsuS</span>
+                            <span class="oi-code">1103</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-img">
-                    <img src="~/icon-512.png" />
-                </div>
-                <div class="card-body">
-                    <span class="oi-person">KrapsuS</span>
-                    <span class="oi-code">1103</span>
-                </div>
+            <div class="col-md-8 p-2 border">
+                <UserMatches steamId="@steamId" />
             </div>
         </div>
-        <div class="col-md-8 p-2 border">
-            <UserMatches steamId="@steamId"/>
+    </div>*@
+
+<!-- new design -->
+@if (CurrentLeaderboard == null)
+{
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden"></span>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="row border-success">
+                    <div class="container-fluid">
+                        <div class="card text-center text-dark shadow">
+                            <div class="card-header font-weight-bold"> 
+                                @CurrentLeaderboard.Leaderboard.Select(x => x.Name).FirstOrDefault() 
+                            </div>
+                            <div class="card-img">
+                                <!-- agregar imagen de steam -->
+                                <img src="@string.Format($"/img/aoe2decivs/1.png")" width="96" height="96" />
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Rating).FirstOrDefault()</div></div>
+                                <div class=" row">
+                                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
+                                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
+                                </div>
+                                <div class=" row">
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Wins).FirstOrDefault()</div>
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Losses).FirstOrDefault()</div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row text-center">
+                                    <button class="btn btn-primary col mr-1">Steam Profile</button>
+                                    <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
+                                    <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @if (true)
+                    {
+                        <div class="container text-center">
+
+                            <div class="alert alert-success" role="alert">
+                                @profile_id is going to reach it's highest rank!
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row border-danger">
+
+                </div>
+            </div>
+            <div class="col">
+                <UserMatches profile_id="@profile_id" />
+            </div>
+        </div>
+    </div>
+}
+
 
 @code {
     [Parameter]
-    public string? steamId { get; set; }
+    public string? profile_id { get; set; }
 
     private const string MY_STEAM_ID = "76561198074662559";
 
     //https://aoe2.net/api/player/lastmatch?game=aoe2de&steam_id={MY_STEAM_ID}
 
+    private string JsonResult;
+    private Models.LeaderboardResult CurrentLeaderboard;
+    private const string GAME = "aoe2de";
+    private const string API_LEADERBOARD = "https://aoe2.net/api/leaderboard";
+    protected override async Task OnInitializedAsync()
+    {
+        JsonResult = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&profile_id={profile_id}");
+        CurrentLeaderboard = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonResult);
+        //https://aoe2.net/api/leaderboard?game=aoe2de&search=KrapsuS
+    }
 
+    //private async void RetrieveLeaderboard()
+    //{
+    //JsonResult = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={leaderboardSelect}&start={startResult}&count={countResult}");
+
+    //    //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
+    //    CurrentLeaderboard = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonResult);
+    //}
 }

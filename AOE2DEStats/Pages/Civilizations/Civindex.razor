@@ -16,14 +16,20 @@
                 @foreach (var civ in GeneralData.Civilizations)
                 {
                     <div class="col-md-3 mb-4">
-                        <div class="card text-center text-dark">
-                            <div class="card-header"> @civ.Name </div>
+                        <div class="card text-center text-dark shadow">
+                            <div class="card-header font-weight-bold"> @civ.Name </div>
                             <div class="card-img">
-                                <img src="@string.Format($"/img/aoe2decivs/{civ.Name}.png")" />
+                                <img src="@string.Format($"/img/aoe2decivs/{civ.Name}.png")" width="64" height="64" />
                             </div>
-                            <div class="card-body row">
-                                <div class="col border">Win</div>
-                                <div class="col border">Lose</div>
+                            <div class="card-body">
+                                <div class=" row">
+                                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
+                                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
+                                </div>
+                                <div class=" row">
+                                    <div class="col border">%Win</div>
+                                    <div class="col border">%Lose</div>
+                                </div>
                             </div>
                             <div class="card-footer">
                                 <a href="@string.Format($"https://aoe2techtree.net/#{civ.Name}")">Tech Tree</a>

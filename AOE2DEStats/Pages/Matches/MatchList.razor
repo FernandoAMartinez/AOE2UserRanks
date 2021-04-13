@@ -143,4 +143,6 @@
         //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
         GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResultStrings);
     }
+
+    //https://aoe2.net/s/{gameId}
 }

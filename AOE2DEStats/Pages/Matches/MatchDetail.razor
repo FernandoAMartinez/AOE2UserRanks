@@ -13,7 +13,7 @@ else
     <div class="container-fluid">
         <div class="row p-2 border">
             <div class="col-md-4 p-2 border">
-                <div class="card">
+                <div class="card bg-dark text-white">
                     <div class="card-header">
                         @GeneralData.GameTypes.Where(x => x.Id == Match.GameType).Select(x => x.Name).FirstOrDefault()
                     </div>
