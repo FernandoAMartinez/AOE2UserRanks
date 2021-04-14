@@ -1,5 +1,6 @@
 ﻿@page "/profile/{profile_id}"
 @inject HttpClient Http
+@inject Services.ILeaderboardService leaderboardService
 <h3>Profile</h3>
 
 @*<div class="container-fluid">
@@ -44,8 +45,8 @@ else
                 <div class="row border-success">
                     <div class="container-fluid">
                         <div class="card text-center text-dark shadow">
-                            <div class="card-header font-weight-bold"> 
-                                @CurrentLeaderboard.Leaderboard.Select(x => x.Name).FirstOrDefault() 
+                            <div class="card-header font-weight-bold">
+                                @CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()
                             </div>
                             <div class="card-img">
                                 <!-- agregar imagen de steam -->
@@ -56,14 +57,15 @@ else
                                     <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Rating).FirstOrDefault()</div></div>
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()</div>
+                                </div>
                                 <div class=" row">
                                     <div class="col border bg-success text-dark font-weight-bold">Win</div>
                                     <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
                                 </div>
                                 <div class=" row">
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Wins).FirstOrDefault()</div>
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Select(x => x.Losses).FirstOrDefault()</div>
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()</div>
+                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()</div>
                                 </div>
                             </div>
                             <div class="card-footer">
@@ -102,26 +104,13 @@ else
     [Parameter]
     public string? profile_id { get; set; }
 
-    private const string MY_STEAM_ID = "76561198074662559";
-
-    //https://aoe2.net/api/player/lastmatch?game=aoe2de&steam_id={MY_STEAM_ID}
-
-    private string JsonResult;
+    [Inject]
+    protected Services.ILeaderboardService ApiLeaderboard { get; set; }
     private Models.LeaderboardResult CurrentLeaderboard;
-    private const string GAME = "aoe2de";
-    private const string API_LEADERBOARD = "https://aoe2.net/api/leaderboard";
+
     protected override async Task OnInitializedAsync()
     {
-        JsonResult = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&profile_id={profile_id}");
-        CurrentLeaderboard = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonResult);
-        //https://aoe2.net/api/leaderboard?game=aoe2de&search=KrapsuS
+        StateHasChanged();
+        CurrentLeaderboard = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
     }
-
-    //private async void RetrieveLeaderboard()
-    //{
-    //JsonResult = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={leaderboardSelect}&start={startResult}&count={countResult}");
-
-    //    //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
-    //    CurrentLeaderboard = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonResult);
-    //}
 }

@@ -5,7 +5,7 @@ namespace AOE2DEStats.Models
     public class LastMatchResult
     {
         [JsonProperty("profile_id")]
-        public int ProfileId { get; set; }
+        public int? ProfileId { get; set; }
         [JsonProperty("steam_id")]
         public string SteamId { get; set; }
         [JsonProperty("name")]
@@ -69,7 +69,7 @@ namespace AOE2DEStats.Models
         [JsonProperty("rms")]
         public string? Rms { get; set; }
         [JsonProperty("scenario")]
-        public int? Scenario { get; set; }
+        public string? Scenario { get; set; }
         [JsonProperty("server")]
         public string Server { get; set; }
         [JsonProperty("shared_exploration")]

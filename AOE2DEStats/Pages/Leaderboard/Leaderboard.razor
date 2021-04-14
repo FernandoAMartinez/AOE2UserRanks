@@ -1,12 +1,12 @@
-﻿@page "/leaderboard"
+﻿@page "/leaderboard/{leaderboardId}"
 @inject HttpClient Http
+@inject Services.ILeaderboardService leaderboardService
+@inject Services.IStringServices stringService
 
-<h3>Leaderboard</h3>
 
-
-@if (RandomMap1v1 == null)
+@if (CurrentLeaderboard == null)
 {
-    <div class="text-center">
+    <div class="container-fluid row text-center">
         <div class="spinner-border" role="status">
             <span class="visually-hidden"></span>
         </div>
@@ -14,9 +14,14 @@
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-dark table-hover table-striped caption-top">
-            <caption>@RandomMap1v1.LeaderboardId - 1v1 Random Map</caption>
+    <div class="container-fluid table-responsive text-center">
+        <div class="row text-center">
+            <div class="card-title ">
+                <h3>Leaderboard | @GeneralData.Leaderboards.Where(x => x.Id == int.Parse(leaderboardId)).Select(x => x.Name).FirstOrDefault()</h3>
+            </div>
+        </div>
+        <table class="table table-light table-hover table-striped caption-top rounded-0">
+            <caption>@leaderboardId - @GeneralData.Leaderboards.Where(x => x.Id == int.Parse(leaderboardId)).Select(x => x.Name).FirstOrDefault() </caption>
             <thead>
                 <tr>
                     <th>#Rank</th>
@@ -29,56 +34,11 @@ else
                 </tr>
             </thead>
             <tbody class="table-hover">
-                @foreach (var profile in RandomMap1v1.Leaderboard)
+                @foreach (var profile in CurrentLeaderboard.Leaderboard)
                 {
                     <tr>
                         <td>@profile.Rank</td>
-                        <td> <a href="@string.Format($"/profile/{profile.ProfileId}")">@profile.Name</a> </td>
-                        <td>@profile.Rating</td>
-                        <td><img src="https://www.countryflags.io/@profile.Country/flat/32.png"></td>
-                        <td>@profile.Games</td>
-                        <td>@profile.Wins</td>
-                        <td>@profile.Losses</td>
-                    </tr>
-                }
-            </tbody>
-
-        </table>
-    </div>
-}
-
-
-@if (RandomMapTG == null)
-{
-    <div class="text-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden"></span>
-        </div>
-    </div>
-}
-else
-{
-    <div class="table-responsive">
-
-        <table class="table table-dark table-hover table-striped  caption-top">
-            <caption>@RandomMapTG.LeaderboardId - Team Random Map</caption>
-            <thead>
-                <tr>
-                    <th>#Rank</th>
-                    <th>Name</th>
-                    <th>Rating</th>
-                    <th>Country</th>
-                    <th>Games</th>
-                    <th>Wins</th>
-                    <th>Losses</th>
-                </tr>
-            </thead>
-            <tbody class="table-hover">
-                @foreach (var profile in RandomMapTG.Leaderboard)
-                {
-                    <tr>
-                        <td>@profile.Rank</td>
-                        <td> <a href="@string.Format($"/profile/{profile.SteamId}")">@profile.Name</a> </td>
+                        <td> <a href="@string.Format($"/profile/{profile.ProfileId.ToString()}")">@profile.Name</a> </td>
                         <td>@profile.Rating</td>
                         <td><img src="https://www.countryflags.io/@profile.Country/flat/32.png"></td>
                         <td>@profile.Games</td>
@@ -90,29 +50,38 @@ else
         </table>
     </div>
 }
-
 
 
 @code {
+    [Parameter]
+    public string leaderboardId { get; set; }
+
+    [Inject]
+    protected Services.ILeaderboardService leaderboard { get; set; }
+
+    [Inject]
+    protected Services.IStringServices strings { get; set; }
+
     //
     //private int countResult;
     private int startResult;
     //private int leaderboardSelect;
     //private string JsonResult;
 
-    private const int LEADERBOARD_1V1 = 3;
-    private const int LEADERBOARD_TG = 4;
+    //private const int LEADERBOARD_1V1 = 3;
+    //private const int LEADERBOARD_TG = 4;
     private const int DEFAULT_COUNT = 50;
 
-    private Models.LeaderboardResult RandomMap1v1;
-    private Models.LeaderboardResult RandomMapTG;
-    private string Json1v1;
-    private string JsonTG;
+    //private Models.LeaderboardResult RandomMap1v1;
+    //private Models.LeaderboardResult RandomMapTG;
+    //private string Json1v1;
+    //private string JsonTG;
 
     private Models.LeaderboardResult CurrentLeaderboard;
+    private Models.GeneralData GeneralData;
     //private const string LANG = "en";
-    private const string GAME = "aoe2de";
-    private const string API_LEADERBOARD = "https://aoe2.net/api/leaderboard";
+    //private const string GAME = "aoe2de";
+    //private const string API_LEADERBOARD = "https://aoe2.net/api/leaderboard";
 
     //private async void RetrieveLeaderboard()
     //{
@@ -123,9 +92,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Json1v1 = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_1V1}&start={startResult}&count={DEFAULT_COUNT}");
-        JsonTG = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_TG}&start={startResult}&count={DEFAULT_COUNT}");
-        RandomMap1v1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(Json1v1);
-        RandomMapTG = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonTG);
+        StateHasChanged();
+        CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), 1, DEFAULT_COUNT, null, null, null);
+        GeneralData = await stringService.GetStringsAsync("en");
+        //Json1v1 = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_1V1}&start={startResult}&count={DEFAULT_COUNT}");
+        //JsonTG = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_TG}&start={startResult}&count={DEFAULT_COUNT}");
+        //RandomMap1v1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(Json1v1);
+        //RandomMapTG = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonTG);
     }
+
+
 }

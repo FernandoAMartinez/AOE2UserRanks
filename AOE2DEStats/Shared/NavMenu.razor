@@ -7,42 +7,76 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
+        <!-- Index -->
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
 
+        <!-- Civilizations -->
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="civilizations">
                 <span class="oi oi-shield" aria-hidden="true"></span> Civilziations
             </NavLink>
         </li>
 
+        <!-- Profile -->
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All"> <!-- onclick="ToggleProfileNav"-->
+            <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
+                <!-- onclick="ToggleProfileNav"-->
                 <span class="oi oi-person" aria-hidden="true"></span> Profile
             </NavLink>
         </li>
 
-        @*@if (expandProfileNav)
-        {
-        }*@
-            <li class="nav-item px-5">
-                <NavLink class="nav-link" href="profile/matches">
-                    <span class="oi oi-dashboard" aria-hidden="true"></span> Matches
-                </NavLink>
-            </li>
+        <!-- Profile Matches -->
+        <li class="nav-item px-5">
+            <NavLink class="nav-link" href="profile/matches">
+                <span class="oi oi-dashboard" aria-hidden="true"></span> Matches
+            </NavLink>
+        </li>
 
+        <!-- Profile Matches -->
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="current-matches">
                 <span class="oi oi-cloud" aria-hidden="true"></span> Current Matches
             </NavLink>
         </li>
 
+        <!-- Leaderboard -->
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="leaderboard">
+            <NavLink class="nav-link" Match="NavLinkMatch.All">
                 <span class="oi oi-graph" aria-hidden="true"></span> Leaderboard
+            </NavLink>
+        </li>
+
+        <!-- 1v1 Deathmatch -->
+        <li class="nav-item px-4">
+            <NavLink class="nav-link" href="leaderboard/1" Match="NavLinkMatch.All">
+                <span class="oi oi-map-marker" aria-hidden="true"></span> 1v1 Deathmatch
+            </NavLink>
+        </li>
+
+        <!-- Team Deathmatch -->
+        <li class="nav-item px-4">
+            <NavLink class="nav-link" href="leaderboard/2" Match="NavLinkMatch.All">
+                <span class="oi oi-map-marker" aria-hidden="true"></span> Team Deathmatch
+            </NavLink>
+        </li>
+
+
+        <!-- 1v1 Random Map -->
+        <li class="nav-item px-4">
+            <NavLink class="nav-link" href="leaderboard/3" Match="NavLinkMatch.All">
+                <span class="oi oi-map-marker" aria-hidden="true"></span> 1v1 Random Map
+            </NavLink>
+        </li>
+
+
+        <!-- Team Random Map -->
+        <li class="nav-item px-4">
+            <NavLink class="nav-link" href="leaderboard/4" Match="NavLinkMatch.All">
+                <span class="oi oi-map-marker" aria-hidden="true"></span> Team Random Map
             </NavLink>
         </li>
 

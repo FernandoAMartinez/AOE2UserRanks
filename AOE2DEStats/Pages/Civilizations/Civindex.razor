@@ -1,8 +1,9 @@
 ﻿@page  "/civilizations"
 @inject HttpClient Http
+@inject Services.IStringServices stringService
 
 <h3>Civindex</h3>
-<div class="container">
+<div class="container-fluid">
     @if (GeneralData == null)
     {
         <div class="spinner-border" role="status">
@@ -45,13 +46,17 @@
     [Parameter]
     public string Lang { get; set; }
 
-    private string JsonResult;
+    [Inject]
+    protected Services.IStringServices Api { get; set; }
+
+    //private string JsonResult;
     private Models.GeneralData GeneralData;
-    private const string GAME = "aoe2de";
-    private const string API_STRINGS = "https://aoe2.net/api/strings";
+    //private const string GAME = "aoe2de";
+    //private const string API_STRINGS = "https://aoe2.net/api/strings";
     protected override async Task OnInitializedAsync()
     {
-        JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={Lang}");
-        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
+        GeneralData = await stringService.GetStringsAsync("en");
+        //JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={Lang}");
+        //GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
     }
 }

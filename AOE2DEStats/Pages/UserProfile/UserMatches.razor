@@ -1,5 +1,8 @@
 ﻿@page "/profile/{profile_id}/matches"
 @inject HttpClient Http
+@inject Services.IStringServices stringService
+@inject Services.IMatchServices matchService
+
 <h3>UserMatches</h3>
 
 <div class="table-responsive">
@@ -16,7 +19,7 @@
             </tr>
         </thead>
 
-        @if (LastMatchesV2 == null)
+        @if (LastMatches == null)
         {
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
@@ -26,7 +29,7 @@
         {
 
             <tbody class="table-hover">
-                @foreach (var match in LastMatchesV2.Where(x => x.Ranked == true).ToList())
+                @foreach (var match in LastMatches.Where(x => x.Ranked == true).ToList())
                 {
                     @*@if (@match.Players.Where(x => x.SteamId == steamId).Select(x => x.Won).FirstOrDefault() == true)
                         {
@@ -35,8 +38,8 @@
                     <tr class="@cssClassWin">
                         <td class="text-center">@GeneralData.Leaderboards.Where(x => x.Id == match.LeaderboardId).Select(x => x.Name).FirstOrDefault()</td>
                         <td class="text-center">
-                            @match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Rating).FirstOrDefault()
-                            
+                            @match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Rating).FirstOrDefault()
+
                         </td>
                         <td class="text-center">
                             <div class="row text-center">
@@ -69,8 +72,8 @@
                                             }
                                             else { break; }
                                             @*@foreach (var teamPlayer in match.Players)
-                                            {
-                                            }*@
+                                                {
+                                                }*@
                                         }
                                     }
 
@@ -80,11 +83,11 @@
                         <td class="text-center">@GeneralData.MapTypes.Where(x => x.Id == match.MapType).Select(x => x.Name).FirstOrDefault()</td>
                         <td class="text-center">@match.Server</td>
                         <td class="text-center">
-                            @if (match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Won).FirstOrDefault() == null)
+                            @if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Won).FirstOrDefault() == null)
                             {
                                 <span class="badge bg-warning text-dark">Drop</span>
                             }
-                            else if (match.Players.Where(x => x.ProfileId == profile_id).Select(x => x.Won).FirstOrDefault() == true)
+                            else if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Won).FirstOrDefault() == true)
                             {
                                 <span class="badge bg-success">Won</span>
                             }
@@ -102,36 +105,24 @@
 @code {
     [Parameter]
     public string profile_id { get; set; }
-    //private string steamId;
-    private string JsonResultMatches;
-    //private Models.LastMatchResult LastMatches;
-    private Models.Match[] LastMatchesV2;
-    private const string GAME = "aoe2de";
-    private const string API_LAST_MATCHES = "https://aoe2.net/api/player/lastmatch";
 
-    private int countMatches = 15;
-    private const string API_LAST_MATCHES_V2 = "https://aoe2.net/api/player/matches";
+    [Inject]
+    protected Services.IStringServices ApiStrings { get; set; }
+
+    [Inject]
+    protected Services.IMatchServices ApiMatch { get; set; }
+
+    private Models.GeneralData GeneralData;
+    private Models.Match[] LastMatches;
+    private int countMatches = 25;
 
     private string cssClassWin;
 
-    private string JsonResultStrings;
-    private Models.GeneralData GeneralData;
-    private const string LANG = "en";
-    private const string API_STRINGS = "https://aoe2.net/api/strings";
+
     protected override async Task OnInitializedAsync()
     {
-        JsonResultStrings = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={LANG}");
-        //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
-        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResultStrings);
-
-        //steamId = "76561198074662559";
-        //steamId = "76561198088251629";
-        //JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES}?game={GAME}&steam_id={steamId}");
-        //LastMatches = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LastMatchResult>(JsonResultMatches);
-
-        //JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES_V2}?game={GAME}&steam_id={steamId}&count={countMatches}");
-        JsonResultMatches = await Http.GetStringAsync($"{API_LAST_MATCHES_V2}?game={GAME}&profile_id={profile_id}&count={countMatches}");
-        LastMatchesV2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Match[]>(JsonResultMatches);
+        GeneralData = await ApiStrings.GetStringsAsync("en");
+        LastMatches = await ApiMatch.GetMatchesSinceAsync(countMatches, null);
     }
 
     //private int GetDeltaRating(int previousRating, int currentRating) => currentRating - previousRating;
