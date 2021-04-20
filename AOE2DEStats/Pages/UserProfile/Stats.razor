@@ -1,29 +1,39 @@
-﻿@inject HttpClient Http
-@inject Services.ILeaderboardService leaderboardService
+﻿@*@inject HttpClient Http*@
+@*@inject Services.ILeaderboardService leaderboardService*@
 <h3>Stats</h3>
 <div class="container-fluid">
     <div class="card text-center text-dark shadow">
         <div class="card-header font-weight-bold">
-            @CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()
+            @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
+            @currentProfile.Name
         </div>
         <div class="card-img">
             <!-- agregar imagen de steam -->
-            <img src="@string.Format($"/img/aoe2decivs/1.png")" width="96" height="96" class="img-thumbnail" />
+            <img src="@string.Format($"/img/aoe2decivs/Aztecs.png")" width="96" height="96" class="img-thumbnail" />
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
             </div>
             <div class="row">
-                <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()</div>
+                <div class="col border">
+                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
+                    @currentProfile.Rating
+                </div>
             </div>
             <div class=" row">
                 <div class="col border bg-success text-dark font-weight-bold">Win</div>
                 <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
             </div>
             <div class=" row">
-                <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()</div>
-                <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()</div>
+                <div class="col border">
+                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
+                    @currentProfile.Wins
+                </div>
+                <div class="col border">
+                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
+                    @currentProfile.Losses
+                </div>
             </div>
         </div>
         <div class="card-footer">
@@ -40,7 +50,7 @@
 {
     <div class="container text-center mt-3">
         <div class="alert alert-success" role="alert">
-            @profile_id is going to reach it's highest rank!
+            @currentProfile.Name is going to reach it's highest rank!
         </div>
     </div>
 }
@@ -48,19 +58,41 @@ else
 {
     <div class="container text-center mt-3">
         <div class="alert alert-danger" role="alert">
-            @profile_id is -42 of it's highest rank!
+            @currentProfile.Name is @GetDifferenceFromHighestRating(currentProfile.HighestRating, currentProfile.Rating) of it's highest rank!
         </div>
     </div>
 }
 @code {
+    public Models.Profile currentProfile { get; set; }
+
+
     [CascadingParameter(Name = "ProfileId")]
     public string profile_id { get; set; }
 
     [CascadingParameter(Name = "CurrentLeaderboard")]
     public Models.LeaderboardResult CurrentLeaderboard { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        currentProfile = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).FirstOrDefault();
+        base.OnParametersSet();
+    }
+
     private bool IsReachingHighestRank()
     {
-        return false;
+        int? highest = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.HighestRating).First();
+        int? current = @CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First();
+        int? difference = GetDifferenceFromHighestRating(highest, current);
+        if (difference != null)
+        {
+            if (difference < 50) return true;
+            else return false;
+        }
+        else return false;
     }
+
+    private int? GetDifferenceFromHighestRating(int? high, int? low) =>
+        (high != null && low != null)
+        ? high - low
+        : 0;
 }
