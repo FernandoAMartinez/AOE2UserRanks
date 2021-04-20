@@ -8,12 +8,12 @@ namespace AOE2DEStats.Services
 {
     public interface ILeaderboardService
     {
-        Task<LeaderboardResult> GetLeaderboardAsync(int leaderboard_id, int? start, int? count, string? search, string? steam_id, string? profile_id);
+        Task<LeaderboardResult> GetLeaderboardAsync(int leaderboard_id, int? start, int? count, string search, string steam_id, string profile_id);
 
     }
     public class LeaderboardServices : ILeaderboardService
     {
-        private string Game = "aoe2de";
+        private readonly string Game = "aoe2de";
 
         private readonly IConfiguration _config;
 
@@ -21,7 +21,7 @@ namespace AOE2DEStats.Services
         {
             _config = config;
         }
-        public async Task<LeaderboardResult> GetLeaderboardAsync(int leaderboard_id, int? start, int? count, string? search, string? steam_id, string? profile_id)
+        public async Task<LeaderboardResult> GetLeaderboardAsync(int leaderboard_id, int? start, int? count, string search, string steam_id, string profile_id)
         {
             /*
              game (Required) Game (Age of Empires 2:Definitive Edition=aoe2de)
@@ -37,7 +37,7 @@ namespace AOE2DEStats.Services
 
             if (search != null) { endpoint += string.Format($"&search={search}"); }
             if (steam_id != null) { endpoint += string.Format($"&steam_id={steam_id}"); }
-            if (profile_id != null) { endpoint  += string.Format($"&profile_id={profile_id}"); }
+            if (profile_id != null) { endpoint += string.Format($"&profile_id={profile_id}"); }
 
             using (var Http = new HttpClient())
             {

@@ -8,9 +8,9 @@ namespace AOE2DEStats.Services
 {
     public interface IPlayerServices
     {
-        Task<Match> GetPlayersLastMatchAsync(string? steam_id, string? profile_id);
-        Task<Match[]> GetMatchHistoryAsync(int start, int count, string? steam_id, string? profile_id, string[]? steam_ids, string[]? profile_ids);
-        Task<RatingHistory> GetRatingHistoryAsync(int leaderboard_id, int start, int count, string? steam_id, string? profile_id);
+        Task<Match> GetPlayersLastMatchAsync(string steam_id, string profile_id);
+        Task<Match[]> GetMatchHistoryAsync(int start, int count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids);
+        Task<RatingHistory> GetRatingHistoryAsync(int leaderboard_id, int start, int count, string steam_id, string profile_id);
         Task<PlayersOnline> GetPlayersOnlineAsync();
     }
     public class PlayerServices : IPlayerServices
@@ -22,7 +22,7 @@ namespace AOE2DEStats.Services
         {
             _config = config;
         }
-        public async Task<Match> GetPlayersLastMatchAsync(string? steam_id, string? profile_id)
+        public async Task<Match> GetPlayersLastMatchAsync(string steam_id, string profile_id)
         {
             /*
                 game (Required) Game (Age of Empires 2:Definitive Edition=aoe2de)
@@ -44,7 +44,7 @@ namespace AOE2DEStats.Services
             }
         }
 
-        public async Task<Match[]> GetMatchHistoryAsync(int start, int count, string? steam_id, string? profile_id, string[]? steam_ids, string[]? profile_ids)
+        public async Task<Match[]> GetMatchHistoryAsync(int start, int count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids)
         {
             /*
                 game (Required) Game (Age of Empires 2:Definitive Edition=aoe2de)
@@ -71,7 +71,7 @@ namespace AOE2DEStats.Services
             }
         }
 
-        public async Task<RatingHistory> GetRatingHistoryAsync(int leaderboard_id, int start, int count, string? steam_id, string? profile_id)
+        public async Task<RatingHistory> GetRatingHistoryAsync(int leaderboard_id, int start, int count, string steam_id, string profile_id)
         {
             /*
                 game (Required) Game (Age of Empires 2:Definitive Edition=aoe2de)

@@ -1,9 +1,15 @@
 ﻿@page "/"
-@inject HttpClient Http
+@inject Services.IStringServices stringService
 
-<h1>Welcome to AOE2 Ladder Stats!</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="jumbotron text-dark">
+    <h1 class="display-4">Welcome to AOE2 Ladder Stats!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+</div>
+@*<SurveyPrompt Title="How is Blazor working for you?" />*@
 
 
 <div class="container text-center fixed-bottom border-top">
@@ -12,17 +18,18 @@
     <p>Age of Empires II DE © Microsoft Corporation. <span class="font-italic">AOE2 Ladder Stats</span> was created under Microsoft's "<a href="https://www.xbox.com/en-us/developers/rules">Game Content Usage Rules</a>" using assets from Age of Empires II DE, and it is not endorsed by or affiliated with Microsoft.</p>
 </div>
 
+
 @code{
-    private string requestedUsername;
-    private string JsonResult;
+
+    [Inject]
+    protected Services.IStringServices ApiStrings { get; set; }
+
     private Models.GeneralData GeneralData;
-    private const string LANG = "en";
-    private const string GAME = "aoe2de";
-    private const string API_STRINGS = "https://aoe2.net/api/strings";
+
     protected override async Task OnInitializedAsync()
     {
-        JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={LANG}");
-        //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
-        GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
+        GeneralData = await ApiStrings.GetStringsAsync("en");
     }
+
+
 }

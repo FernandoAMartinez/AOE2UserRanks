@@ -8,7 +8,7 @@ namespace AOE2DEStats.Services
 {
     public interface IStringServices
     {
-        Task<GeneralData> GetStringsAsync(string? lang);
+        Task<GeneralData> GetStringsAsync(string lang);
     }
     public class StringServices : IStringServices
     {
@@ -20,7 +20,7 @@ namespace AOE2DEStats.Services
             _config = config;
         }
 
-        public async Task<GeneralData> GetStringsAsync(string? lang)
+        public async Task<GeneralData> GetStringsAsync(string lang)
         {
             /*
              game (Required) Game (Age of Empires 2:HD=aoe2hd, Age of Empires 2:Definitive Edition=aoe2de)
