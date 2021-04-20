@@ -41,55 +41,17 @@ else
 {
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col-md-4">
                 <div class="row border-success">
-                    <div class="container-fluid">
-                        <div class="card text-center text-dark shadow">
-                            <div class="card-header font-weight-bold">
-                                @CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()
-                            </div>
-                            <div class="card-img">
-                                <!-- agregar imagen de steam -->
-                                <img src="@string.Format($"/img/aoe2decivs/1.png")" width="96" height="96" />
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()</div>
-                                </div>
-                                <div class=" row">
-                                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
-                                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
-                                </div>
-                                <div class=" row">
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()</div>
-                                    <div class="col border">@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()</div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="row text-center">
-                                    <button class="btn btn-primary col mr-1">Steam Profile</button>
-                                    <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
-                                    <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    @if (true)
-                    {
-                        <div class="container text-center">
-
-                            <div class="alert alert-success" role="alert">
-                                @profile_id is going to reach it's highest rank!
-                            </div>
-                        </div>
-                    }
+                    <!-- Profile Info -->
+                    <CascadingValue Name="ProfileId" Value="@profile_id">
+                        <CascadingValue Name="CurrentLeaderboard" Value="@CurrentLeaderboard">
+                            <Stats />
+                        </CascadingValue>
+                    </CascadingValue>
                 </div>
                 <div class="row border-danger">
-
+                    <!-- Civilization Stats -->
                 </div>
             </div>
             <div class="col">
@@ -97,6 +59,7 @@ else
             </div>
         </div>
     </div>
+
 }
 
 
@@ -113,4 +76,6 @@ else
         StateHasChanged();
         CurrentLeaderboard = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
     }
+
+
 }

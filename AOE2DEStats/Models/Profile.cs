@@ -5,7 +5,7 @@ namespace AOE2DEStats.Models
     public class Profile
     {
         [JsonProperty("profile_id")]
-        public int ProfileId { get; set; }
+        public int? ProfileId { get; set; }
         [JsonProperty("rank")]
         public int? Rank { get; set; }
         [JsonProperty("rating")]

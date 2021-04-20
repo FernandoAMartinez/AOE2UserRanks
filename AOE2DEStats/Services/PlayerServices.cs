@@ -32,9 +32,9 @@ namespace AOE2DEStats.Services
             string jsonResult;
 
             string endpoint = $"{_config["PlayerLastMatchesAPI"]}?game={game}";
-            if (steam_id == null && profile_id != null) { string.Join("&", string.Format($"profile_id={ profile_id }")); }
-            else if (profile_id == null && steam_id != null) { string.Join("&", string.Format($"steam_id={ steam_id }")); }
-            else if (steam_id != null && profile_id != null) { string.Join("&", string.Format($"profile_id={ profile_id }")); }
+            if (steam_id == null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
+            else if (profile_id == null && steam_id != null) { endpoint += string.Format($"&steam_id={ steam_id }"); }
+            else if (steam_id != null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
             else return null;
 
             using (var Http = new HttpClient())
@@ -59,10 +59,10 @@ namespace AOE2DEStats.Services
             string jsonResult;
             string endpoint = $"{_config["PlayerMatchesAPI"]}?game={game}&start={start}&count={count}";
 
-            if (steam_id != null) { string.Join("&", string.Format($"steam_id={steam_id}")); }
-            if (profile_id != null) { string.Join("&", string.Format($"profile_id={profile_id}")); }
-            if (steam_ids != null) { string.Join("&", string.Format($"steam_ids={string.Join(",", steam_ids)}")); }
-            if (profile_ids != null) { string.Join("&", string.Format($"profile_ids={string.Join(",", profile_ids)}")); }
+            if (steam_id != null) { endpoint += string.Format($"&steam_id={ steam_id }"); }
+            if (profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
+            if (steam_ids != null) { endpoint += string.Format($"&profile_ids={ steam_ids }"); }
+            if (profile_ids != null) { endpoint += string.Format($"&profile_ids={ profile_ids }"); }
 
             using (var Http = new HttpClient())
             {
@@ -85,9 +85,10 @@ namespace AOE2DEStats.Services
             string jsonResult;
             string endpoint = $"{_config["PlayerRatingHistoryAPI"]}?game={game}&leaderboard_id={leaderboard_id}&start={start}&count={count}";
 
-            if (steam_id == null && profile_id != null) { string.Join("&", string.Format($"profile_id={ profile_id }")); }
-            else if (profile_id == null && steam_id != null) { string.Join("&", string.Format($"steam_id={ steam_id }")); }
-            else if (steam_id != null && profile_id != null) { string.Join("&", string.Format($"profile_id={ profile_id }")); }
+            if (steam_id == null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
+            else if (profile_id == null && steam_id != null) { endpoint += string.Format($"&steam_id={ steam_id }"); }
+            else if (steam_id != null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
+
             else return null;
 
             using (var Http = new HttpClient())
