@@ -30,43 +30,73 @@ else
                 @match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Rating).FirstOrDefault()
             </td>
             <td class="text-center">
-                <div class="row text-center">
-                    <span class="text-center">
-                        @foreach (var player in match.Players.OrderBy(x => x.Team))
+                <div class="row text-center justify-content-center">
+                    <!-- Modif 20/04/2021 -->
+                    @*<span class="text-center">*@
+                    @if (previousTeam != 1) { previousTeam = 1; }
+
+                    @foreach (var player in match.Players.OrderBy(x => x.Team).ToList())
+                        {
+                        @if (player != null)
                             {
-                            @if (player != null)
+                            //if (previousTeam == null) previousTeam = player.Team;
+
+                            @if (match.NumSlots.Equals(2))
                                 {
-
-                                @if (match.NumSlots.Equals(2))
+                                @if (player.Slot.Equals(1))
                                     {
-                                    @if (player.Slot.Equals(1))
-                                        {
-                                        @player.Name
-                                        <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
-                                        <span> vs. </span>
-                                        }
-                                        else
-                                        {
-                                        <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
-                                        @player.Name
-                                        }
+                                    <div class="col-5">
+                                        <span class="font-weight-bold">
+                                            <a href="@string.Format($"/profile/{player.ProfileId.ToString()}")">@player.Name</a>
+                                        </span>
+                                        <span>
+                                            <img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" />
+                                        </span>
+                                    </div>
+                                    <div class="col-2">
+                                        <span class="font-italic"> vs. </span>
+                                    </div>
                                     }
-
-                                @if (match.NumSlots > 2)
+                                    else
                                     {
-                                    @player.Name
-                                    <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
-
-                                    @if (player != match.Players.Last())
-                                        {
-                                        <span> vs. </span>
-                                        }
-                                        else { break; }
+                                    <div class="col-5">
+                                        <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
+                                        <span class="font-weight-bold">
+                                            <a href="@string.Format($"/profile/{player.ProfileId.ToString()}")">@player.Name</a>
+                                        </span>
+                                    </div>
                                     }
                                 }
-                            }
 
-                    </span>
+                            @if (match.NumSlots > 2)
+                                {
+                                @if (player.Team != previousTeam)
+                                    {
+                                    <div class="w-100"></div>
+                                    @if (player != match.Players.Last())
+                                        {
+                                        <div class="col-12">
+                                            <span class="font-italic"> vs. </span>
+                                        </div>
+                                        }
+                                    <div class="w-100"></div>
+                                    @*else { break; }*@
+                                    }
+                                <div class="col-3">
+                                    <span class="font-weight-bold">
+                                        <a href="@string.Format($"/profile/{player.ProfileId.ToString()}")">@player.Name</a>
+                                    </span>                                    
+                                    <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
+                                </div>
+
+                                    previousTeam = player.Team;
+                                }
+
+
+                            }
+                        }
+
+                    @*</span>*@
                 </div>
 
             </td>
@@ -107,6 +137,7 @@ else
     [Inject]
     protected Services.IPlayerServices ApiPlayer { get; set; }
 
+    private int? previousTeam = 1;
     private Models.GeneralData GeneralData;
     private Models.Match[] LastMatches;
     private int countMatches = 25;
