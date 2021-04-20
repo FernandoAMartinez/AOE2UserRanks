@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <a href="@string.Format($"https://aoe2techtree.net/#{civ.Name}")">Tech Tree</a>
+                                <a href="@string.Format($"https://aoe2techtree.net/#{civ.Name}")" class="bs-tooltip-bottom" title="View tech tree on aoe2techtree.net">Tech Tree</a>
                             </div>
                         </div>
                     </div>
@@ -42,6 +42,7 @@
         </div>
     }
 </div>
+
 @code {
     [Parameter]
     public string Lang { get; set; }

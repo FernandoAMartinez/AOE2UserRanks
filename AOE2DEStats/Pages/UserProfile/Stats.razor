@@ -1,66 +1,82 @@
 ﻿@*@inject HttpClient Http*@
 @*@inject Services.ILeaderboardService leaderboardService*@
 <h3>Stats</h3>
-<div class="container-fluid">
-    <div class="card text-center text-dark shadow">
-        <div class="card-header font-weight-bold">
-            @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
-            @currentProfile.Name
-        </div>
-        <div class="card-img">
-            <!-- agregar imagen de steam -->
-            <img src="@string.Format($"/img/aoe2decivs/Aztecs.png")" width="96" height="96" class="img-thumbnail" />
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
-            </div>
-            <div class="row">
-                <div class="col border">
-                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
-                    @currentProfile.Rating
-                </div>
-            </div>
-            <div class=" row">
-                <div class="col border bg-success text-dark font-weight-bold">Win</div>
-                <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
-            </div>
-            <div class=" row">
-                <div class="col border">
-                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
-                    @currentProfile.Wins
-                </div>
-                <div class="col border">
-                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
-                    @currentProfile.Losses
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="row text-center">
-                <button class="btn btn-primary col mr-1">Steam Profile</button>
-                <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
-                <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-@if (IsReachingHighestRank())
+@if (currentProfile == null)
 {
-    <div class="container text-center mt-3">
-        <div class="alert alert-success" role="alert">
-            @currentProfile.Name is going to reach it's highest rank!
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden"></span>
         </div>
     </div>
 }
 else
 {
-    <div class="container text-center mt-3">
-        <div class="alert alert-danger" role="alert">
-            @currentProfile.Name is @GetDifferenceFromHighestRating(currentProfile.HighestRating, currentProfile.Rating) of it's highest rank!
+
+    <div class="container-fluid">
+        <div class="card text-center text-dark shadow">
+            <div class="card-header font-weight-bold">
+                @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
+                @currentProfile.Name
+            </div>
+            <div class="card-img">
+                <!-- agregar imagen de steam -->
+                <img src="@string.Format($"/img/aoe2decivs/Aztecs.png")" width="96" height="96" class="img-thumbnail" />
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
+                </div>
+                <div class="row">
+                    <div class="col border">
+                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
+                        @currentProfile.Rating
+                    </div>
+                </div>
+                <div class=" row">
+                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
+                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
+                </div>
+                <div class=" row">
+                    <div class="col border">
+                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
+                        @currentProfile.Wins
+                    </div>
+                    <div class="col border">
+                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
+                        @currentProfile.Losses
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row text-center">
+                        <button class="btn btn-primary col mr-1">
+                    <a href="https://steamcommunity.com/profiles/@currentProfile.SteamId">
+                        Steam Profile
+                    </a>
+                        </button>
+                    <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
+                    <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
+                </div>
+
+            </div>
         </div>
     </div>
+    @if (IsReachingHighestRank())
+    {
+        <div class="container text-center mt-3">
+            <div class="alert alert-success" role="alert">
+                @currentProfile.Name is going to reach it's highest rank!
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container text-center mt-3">
+            <div class="alert alert-danger" role="alert">
+                @currentProfile.Name is @GetDifferenceFromHighestRating(currentProfile.HighestRating, currentProfile.Rating) of it's highest rank!
+            </div>
+        </div>
+    }
 }
 @code {
     public Models.Profile currentProfile { get; set; }

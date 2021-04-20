@@ -9,7 +9,7 @@ namespace AOE2DEStats.Services
     public interface IPlayerServices
     {
         Task<Match> GetPlayersLastMatchAsync(string steam_id, string profile_id);
-        Task<Match[]> GetMatchHistoryAsync(int start, int count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids);
+        Task<Match[]> GetMatchHistoryAsync(int? start, int? count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids);
         Task<RatingHistory> GetRatingHistoryAsync(int leaderboard_id, int start, int count, string steam_id, string profile_id);
         Task<PlayersOnline> GetPlayersOnlineAsync();
     }
@@ -44,7 +44,7 @@ namespace AOE2DEStats.Services
             }
         }
 
-        public async Task<Match[]> GetMatchHistoryAsync(int start, int count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids)
+        public async Task<Match[]> GetMatchHistoryAsync(int? start, int? count, string steam_id, string profile_id, string[] steam_ids, string[] profile_ids)
         {
             /*
                 game (Required) Game (Age of Empires 2:Definitive Edition=aoe2de)
@@ -83,8 +83,11 @@ namespace AOE2DEStats.Services
             */
 
             string jsonResult;
-            string endpoint = $"{_config["PlayerRatingHistoryAPI"]}?game={game}&leaderboard_id={leaderboard_id}&start={start}&count={count}";
+            string endpoint = $"{_config["PlayerRatingHistoryAPI"]}?game={game}&leaderboard_id={leaderboard_id}";
+            //string endpoint = $"{_config["PlayerRatingHistoryAPI"]}?game={game}&leaderboard_id={leaderboard_id}&start={start}&count={count}";
 
+            if (start == null) { endpoint += string.Format($"&start={ start }"); }
+            if (count == null) { endpoint += string.Format($"&count={ count }"); }
             if (steam_id == null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }
             else if (profile_id == null && steam_id != null) { endpoint += string.Format($"&steam_id={ steam_id }"); }
             else if (steam_id != null && profile_id != null) { endpoint += string.Format($"&profile_id={ profile_id }"); }

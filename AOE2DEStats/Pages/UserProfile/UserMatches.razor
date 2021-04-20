@@ -140,13 +140,13 @@ else
     private int? previousTeam = 1;
     private Models.GeneralData GeneralData;
     private Models.Match[] LastMatches;
-    private int countMatches = 25;
+    private int countMatches = 50;
 
 
     protected override async Task OnInitializedAsync()
     {
         GeneralData = await ApiStrings.GetStringsAsync("en");
-        LastMatches = await ApiPlayer.GetMatchHistoryAsync(1, countMatches, null, profile_id, null, null);
+        LastMatches = await ApiPlayer.GetMatchHistoryAsync(null, countMatches, null, profile_id, null, null);
     }
 
     //private int GetDeltaRating(int previousRating, int currentRating) => currentRating - previousRating;
