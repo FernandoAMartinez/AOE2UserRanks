@@ -14,20 +14,30 @@
 
 <body>
     <app class="bg-dark">
-        <div class="spinner-grow text-primary d-flex justify-content-center" role="status">
-            <span class="visually-hidden"></span> 
-        </div>
+        <body class="bg-dark">
+            <div class="row">
+                <div class="col align-self-center">
+
+                    <div class="spinner-grow text-primary d-flex justify-content-center" role="status">
+                        <span class="visually-hidden"></span> 
+                    </div>
+                </div>
+            </div>
+        </body>
 
     </app>
 
-
-        <div id="blazor-error-ui" class="col-sm-2 alert alert-danger alert-dismissible fade show float-sm-right ml-3 px-3 d-inline-flex align-content-center" role="alert">
+    <!-- add error handling -->
+    <div id="blazor-error-ui" class="col-md-2 small alert alert-danger alert-dismissible fade show mx-3" style="display:none; z-index:1070;" role="alert">
+        An unhandled error has ocurred.
+        <button type="button" class="btn-close border-0 ml-3 dismiss" data-bs-dismiss="alert" aria-label="Close">🗙</button>
+    </div>
+        <!--<div id="blazor-error-ui" class="col-sm-3 alert alert-danger alert-dismissible fade show float-sm-right ml-3 d-inline-flex align-content-center" style="z-index:909;" role="alert">
             <strong>An unhandled error has occurred.</strong>
             <button class="btn btn-info reload" data-dismiss="">Reload</button>
             <a class="dismiss ml-3">🗙</a>
-        </div>
-    <!--<div class="row" >
-    </div>-->
+        </div>-->
+
 
 
     <script src="_framework/blazor.webassembly.js"></script>
