@@ -1,5 +1,5 @@
-﻿@*@inject HttpClient Http*@
-@*@inject Services.ILeaderboardService leaderboardService*@
+﻿@inject Services.IPlayerServices playerService
+
 <h3>Stats</h3>
 @if (currentProfile == null)
 {
@@ -11,10 +11,10 @@
 }
 else
 {
-
     <div class="container-fluid">
         <div class="card text-center text-dark shadow">
             <div class="card-header font-weight-bold">
+                <span class="float-left">#@currentProfile.Rank</span>
                 @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
                 @currentProfile.Name
             </div>
@@ -49,18 +49,84 @@ else
             </div>
             <div class="card-footer">
                 <div class="row text-center">
-                        <button class="btn btn-primary col mr-1">
-                    <a href="https://steamcommunity.com/profiles/@currentProfile.SteamId">
-                        Steam Profile
-                    </a>
-                        </button>
+                    <button class="btn btn-primary col mr-1">
+                        <a href="https://steamcommunity.com/profiles/@currentProfile.SteamId">
+                            Steam Profile
+                        </a>
+                    </button>
                     <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
                     <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
                 </div>
 
             </div>
         </div>
+        <!-- New Component: Team Positions -->
+        <div class="card text-center text-dark shadow mt-3">
+            <div class="card-header font-weight-bold">
+                Team Position's Stats
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #405BFE;">1</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">
+                        @{
+                            LastMatches.Where(x => x.Ranked == true).
+                                Select(x => x.Players.Where(
+                                    x => x.ProfileId == int.Parse(profile_id)).Select(x => x.Color).ToList());
+                        }
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #FF0000;">2</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">42</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #00FF00;">3</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">2</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #FFFF00;">4</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">54</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #00FFFF;">5</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">34</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #FF57B3;">6</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">1</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #797979;">7</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">52</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="col order-first border" style="background-color: #FF9600;">8</div>
+                        <div class="w- w-100 mt-1 mb-1"></div>
+                        <div class="col order-last border">4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Component: Last Civs Win Rate-->
+        <div class="card text-center text-dark shadow mt-3">
+            <div class="card-header font-weight-bold">
+                Civilizations Win Rates
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
     </div>
+
     @if (IsReachingHighestRank())
     {
         <div class="container text-center mt-3">
@@ -80,13 +146,21 @@ else
 }
 @code {
     public Models.Profile currentProfile { get; set; }
+    private Models.Match[] LastMatches;
 
+    [Inject]
+    protected Services.IPlayerServices ApiPlayers { get; set; }
 
     [CascadingParameter(Name = "ProfileId")]
     public string profile_id { get; set; }
 
     [CascadingParameter(Name = "CurrentLeaderboard")]
     public Models.LeaderboardResult CurrentLeaderboard { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        LastMatches = await ApiPlayers.GetMatchHistoryAsync(0, 25, null, profile_id, null, null);
+    }
 
     protected override void OnParametersSet()
     {

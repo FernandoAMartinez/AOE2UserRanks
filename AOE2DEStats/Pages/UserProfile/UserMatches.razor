@@ -32,7 +32,6 @@ else
             <td class="text-center">
                 <div class="row text-center justify-content-center">
                     <!-- Modif 20/04/2021 -->
-                    @*<span class="text-center">*@
                     @if (previousTeam != 1) { previousTeam = 1; }
 
                     @foreach (var player in match.Players.OrderBy(x => x.Team).ToList())
@@ -80,25 +79,18 @@ else
                                         </div>
                                         }
                                     <div class="w-100"></div>
-                                    @*else { break; }*@
                                     }
                                 <div class="col-3">
                                     <span class="font-weight-bold">
                                         <a href="@string.Format($"/profile/{player.ProfileId.ToString()}")">@player.Name</a>
-                                    </span>                                    
+                                    </span>
                                     <span><img src="@string.Format($"/img/aoe2decivs/{GeneralData.Civilizations.Where(x => x.Id == player.Civilization).Select(x => x.Name).FirstOrDefault()}.png")" width="32" height="32" /></span>
                                 </div>
-
                                     previousTeam = player.Team;
                                 }
-
-
                             }
                         }
-
-                    @*</span>*@
                 </div>
-
             </td>
             <td class="text-center">
                 @GeneralData.MapTypes.Where(x => x.Id == match.MapType).Select(x => x.Name).FirstOrDefault()
@@ -107,8 +99,6 @@ else
                 @match.Server
             </td>
             <td class="text-center">
-
-
                 @if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Won).FirstOrDefault() == null)
                     {
                     <span class="badge bg-warning text-dark">Drop</span>
@@ -121,15 +111,20 @@ else
                     {
                     <span class="badge bg-danger">Lost</span>
                     }
-
             </td>
         </RowTemplate>
     </DatagridView>
+    <div class="font-italic">
+        <a href="@string.Format($"/profile/{profile_id}/matches")">Go to full list of matches...</a>
+    </div>
 }
 
 @code {
     [Parameter]
     public string profile_id { get; set; }
+
+    [Parameter]
+    public int countMatches { get; set; }
 
     [Inject]
     protected Services.IStringServices ApiStrings { get; set; }
@@ -140,13 +135,17 @@ else
     private int? previousTeam = 1;
     private Models.GeneralData GeneralData;
     private Models.Match[] LastMatches;
-    private int countMatches = 50;
+    //private int countMatches = 25;
 
 
     protected override async Task OnInitializedAsync()
     {
+        if(countMatches == 0)
+        {
+            countMatches = 50;
+        }
         GeneralData = await ApiStrings.GetStringsAsync("en");
-        LastMatches = await ApiPlayer.GetMatchHistoryAsync(null, countMatches, null, profile_id, null, null);
+        LastMatches = await ApiPlayer.GetMatchHistoryAsync(0, countMatches, null, profile_id, null, null);
     }
 
     //private int GetDeltaRating(int previousRating, int currentRating) => currentRating - previousRating;
