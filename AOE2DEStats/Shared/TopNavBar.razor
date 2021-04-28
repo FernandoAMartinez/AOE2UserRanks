@@ -1,0 +1,75 @@
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-light mt-3 ml-3 mr-3 fixed-top shadow-lg rounded-bottom">
+    <!-- Navbar content -->
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="">DE Ladder</a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="@NavMenuCssClass">
+            <ul class="navbar-nav mb-2 mb-lg-0 flex-row">
+                <!-- Index -->
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
+
+                <!-- Civilizations -->
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="civilizations">
+                        <span class="oi oi-shield" aria-hidden="true"></span> Civilziations
+                    </NavLink>
+                </li>
+
+                <!-- Profile -->
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
+                        <!-- onclick="ToggleProfileNav"-->
+                        <span class="oi oi-person" aria-hidden="true"></span> Profile
+                        <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                    </NavLink>
+                </li>
+
+                <!-- Leaderboard -->
+                <li class="nav-item">
+                    <NavLink class="nav-link" Match="NavLinkMatch.All" href="leaderboard">
+                        <span class="oi oi-graph" aria-hidden="true"></span> Leaderboard
+                    </NavLink>
+                </li>
+
+            </ul>
+
+            <!-- Search form -->
+            <form class="d-flex input-group w-auto">
+                <input type="search"
+                       class="form-control"
+                       placeholder="Search by User"
+                       aria-label="Search" />
+                <button class="btn btn-outline-primary"
+                        type="button"
+                        data-mdb-ripple-color="dark">
+                    <span class="oi-magnifying-glass"></span>
+                </button>
+            </form>
+
+        </div>
+    </div>
+</nav>
+
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    //private bool expandProfileNav = false;
+    //private void ToggleProfileNav() => expandProfileNav = !expandProfileNav;
+
+}

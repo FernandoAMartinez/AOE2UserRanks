@@ -1,9 +1,10 @@
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        @*<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(AppWrapper)" />
     </Found>
     <NotFound>
-        <LayoutView Layout="@typeof(MainLayout)">
+        <LayoutView Layout="@typeof(AppWrapper)">
             <h1 class="font-weight-bold">404</h1>
             <p>Sorry, there's nothing at this address.</p>
         </LayoutView>
