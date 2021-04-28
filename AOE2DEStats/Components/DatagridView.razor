@@ -1,26 +1,29 @@
 ﻿@typeparam TItem
 
-<div class="container-fluid table-responsive text-center">
-    <table class="table table-light table-hover table-striped table-bordered shadow-sm rounded" style="border-radius:5px">
-        <thead class="bg-primary text-white">
-            <tr>@TableHeader</tr>
-        </thead>
-        <tbody class="table-hover">
-            @foreach (var item in Items)
-            {
-                <tr class="text-center">@RowTemplate(item)</tr>
-            }
-        </tbody>
-    </table>
-</div>
+    <div class="card">
 
-@code {
-    [Parameter]
-    public RenderFragment TableHeader { get; set; }
+        <div class="table-responsive text-center rounded">
+            <table class="table table-hover table-bordered table-striped  shadow-sm" style="border-radius:5px">
+                <thead class="bg-primary text-white">
+                    <tr>@TableHeader</tr>
+                </thead>
+                <tbody class="table-hover table-light">
+                    @foreach (var item in Items)
+                    {
+                        <tr class="text-center">@RowTemplate(item)</tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    [Parameter]
-    public RenderFragment<TItem> RowTemplate { get; set; }
+    @code {
+        [Parameter]
+        public RenderFragment TableHeader { get; set; }
 
-    [Parameter]
-    public IReadOnlyList<TItem> Items { get; set; }
-}
+        [Parameter]
+        public RenderFragment<TItem> RowTemplate { get; set; }
+
+        [Parameter]
+        public IReadOnlyList<TItem> Items { get; set; }
+    }
