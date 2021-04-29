@@ -1,79 +1,24 @@
 ﻿@page "/leaderboard/"
-@*@inject HttpClient Http
-    @inject Services.ILeaderboardService leaderboardService
-    @inject Services.IStringServices stringService*@
-
 
 <div class="container-fluid row">
-    <div class="col">
-        <span>Select leaderboard</span>
-        <select @bind="leaderboardId">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
+    <div class="col-md-4 m-3">
+        <select class="form-select" aria-label="Default select example" @bind="leaderboardId">
+            <option selected>Select Leaderboard</option>
+            <option value="1">1v1 Deathmatch</option>
+            <option value="2">Team Deathmatch</option>
+            <option value="3">1v1 Random Map</option>
+            <option value="4">Team Random Map</option>
         </select>
     </div>
 </div>
 
 @if (leaderboardId != null)
 {
-
-    <LeaderboardRatingTable leaderboardId="@leaderboardId">
-
-    </LeaderboardRatingTable>
+    <LeaderboardRatingTable leaderboardId="@leaderboardId" />
 }
 
 
 @code {
     [Parameter]
     public string leaderboardId { get; set; }
-
-
-    //[Inject]
-    //protected Services.ILeaderboardService leaderboard { get; set; }
-
-    //[Inject]
-    //protected Services.IStringServices strings { get; set; }
-
-    ////
-    ////private int countResult;
-    //private int startResult;
-    ////private int leaderboardSelect;
-    ////private string JsonResult;
-
-    ////private const int LEADERBOARD_1V1 = 3;
-    ////private const int LEADERBOARD_TG = 4;
-    //private const int DEFAULT_COUNT = 50;
-
-    ////private Models.LeaderboardResult RandomMap1v1;
-    ////private Models.LeaderboardResult RandomMapTG;
-    ////private string Json1v1;
-    ////private string JsonTG;
-
-    //private Models.LeaderboardResult CurrentLeaderboard;
-    //private Models.GeneralData GeneralData;
-    ////private const string LANG = "en";
-    ////private const string GAME = "aoe2de";
-    ////private const string API_LEADERBOARD = "https://aoe2.net/api/leaderboard";
-
-    ////private async void RetrieveLeaderboard()
-    ////{
-    ////    JsonResult = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={leaderboardSelect}&start={startResult}&count={countResult}");
-    ////    //GeneralData = await Http.GetFromJsonAsync<Models.GeneralData>("https://aoe2.net/api/strings?game=aoe2de&language=en");
-    ////    CurrentLeaderboard = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonResult);
-    ////}
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    StateHasChanged();
-    //    CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), 1, DEFAULT_COUNT, null, null, null);
-    //    GeneralData = await stringService.GetStringsAsync("en");
-    //    //Json1v1 = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_1V1}&start={startResult}&count={DEFAULT_COUNT}");
-    //    //JsonTG = await Http.GetStringAsync($"{API_LEADERBOARD}?game={GAME}&leaderboard_id={LEADERBOARD_TG}&start={startResult}&count={DEFAULT_COUNT}");
-    //    //RandomMap1v1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(Json1v1);
-    //    //RandomMapTG = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.LeaderboardResult>(JsonTG);
-    //}
-
-
 }
