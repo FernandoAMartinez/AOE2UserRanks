@@ -6,22 +6,18 @@
 
 <div class="container-fluid">
     <div class="main bg-dark text-white">
-        @*<div class="top-row px-4" style="z-index:10">
-                <select class="custom-select-sm">
-                    <option>en</option>
-                    <option>es</option>
-                </select>
-                <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-            </div>*@
-        <div class="w-100 mt-3"></div>
+        <div class="w-100 p-3 pt-3"></div>
         <div class="content mt-sm-5 mt-lg-5 bg-dark text-white">
             @Body
         </div>
     </div>
 
-    <div class="container-fluid text-white text-center border-top h-auto">
-        <p>@DateTime.Now.Year © Developed by <a href="https://github.com/FernandoAMartinez">FernandoAMartinez</a></p>
-        <p>Published on Github: <a href="https://github.com/FernandoAMartinez/AOE2UserRanks" class="font-italic">FernandoAMartinez/AOE2UserRanks</a></p>
-        <p>Age of Empires II DE © Microsoft Corporation. <span class="font-italic">AOE2 Ladder Stats</span> was created under Microsoft's "<a href="https://www.xbox.com/en-us/developers/rules">Game Content Usage Rules</a>" using assets from Age of Empires II DE, and it is not endorsed by or affiliated with Microsoft.</p>
+    <div class="text-white text-center border-top small position-static mt-auto">
+        <p>
+            @DateTime.Now.Year © Developed by <a href="https://github.com/FernandoAMartinez">FernandoAMartinez</a><br />
+            Published on Github: <a href="https://github.com/FernandoAMartinez/AOE2UserRanks" class="font-italic">FernandoAMartinez/AOE2UserRanks</a><br />
+            Age of Empires II DE © Microsoft Corporation. <span class="font-italic">AOE2 Ladder Stats</span> was created under Microsoft's "<a href="https://www.xbox.com/en-us/developers/rules">Game Content Usage Rules</a>" using assets from Age of Empires II DE, and it is not endorsed by or affiliated with Microsoft.
+        </p>
     </div>
 </div>
+
