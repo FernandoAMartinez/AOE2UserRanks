@@ -19,18 +19,24 @@
                     <div class="col-md-3 mb-4">
                         <div class="card text-center text-dark shadow">
                             <div class="card-header font-weight-bold"> @civ.Name </div>
-                            <div class="card-img">
+                            <div class="card-img justify-content-center align-content-center">
                                 <img src="@string.Format($"/img/aoe2decivs/{civ.Name}.png")" width="64" height="64" />
                             </div>
                             <div class="card-body">
-                                <div class=" row">
-                                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
-                                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
-                                </div>
-                                <div class=" row">
-                                    <div class="col border">%Win</div>
-                                    <div class="col border">%Lose</div>
-                                </div>
+                                <table class="table text-dark border">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-success border">Win</th>
+                                            <th class="bg-danger border">Lose</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border">%win</td>
+                                            <td class="border">%Lose</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="card-footer">
                                 <a href="@string.Format($"https://aoe2techtree.net/#{civ.Name}")" class="bs-tooltip-bottom" title="View tech tree on aoe2techtree.net">Tech Tree</a>
