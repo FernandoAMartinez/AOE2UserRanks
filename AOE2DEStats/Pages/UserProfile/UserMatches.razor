@@ -21,6 +21,7 @@ else
             <th>Map</th>
             <th>Server</th>
             <th>Result</th>
+            <th>Match Detail</th>
         </TableHeader>
         <RowTemplate>
             <td class="text-center">
@@ -112,14 +113,34 @@ else
                     <span class="badge bg-danger">Lost</span>
                     }
             </td>
+            <td>
+                <button class="btn btn-primary" @onclick="() => Modal.Open()">Detail</button>
+                <Modal @ref="Modal">
+                    <Title>
+                        <em>
+                            @match.MatchUUID
+                        </em>
+                    </Title>
+                    <Body>
+                        <AOE2DEStats.Pages.Matches.MatchDetail Uuid="@match.MatchUUID"/>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Modal.Close()">Close</button>
+                    </Footer>
+                </Modal>
+            </td>
         </RowTemplate>
     </DatagridView>
+
     <div class="font-italic">
         <a href="@string.Format($"/profile/{profile_id}/matches")">Go to full list of matches...</a>
     </div>
 }
 
 @code {
+    private Modal Modal { get; set; }
+
     [Parameter]
     public string profile_id { get; set; }
 
@@ -140,7 +161,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if(countMatches == 0)
+        if (countMatches == 0)
         {
             countMatches = 50;
         }
