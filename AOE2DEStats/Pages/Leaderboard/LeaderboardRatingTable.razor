@@ -4,7 +4,7 @@
 
 @if (CurrentLeaderboard == null)
 {
-    <div class="container-fluid row text-center">
+    <div class="container row text-center">
         <div class="spinner-border" role="status">
             <span class="visually-hidden"></span>
         </div>
@@ -53,10 +53,16 @@ else
     {
         StateHasChanged();
         //CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), 1, DEFAULT_COUNT, null, null, null);
-        CurrentLeaderboard = await GetCurrentLeaderboardByStart(1);
+        //CurrentLeaderboard = await GetCurrentLeaderboardByStart(1);
         GeneralData = await stringService.GetStringsAsync("en");
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        CurrentLeaderboard = null;
+        CurrentLeaderboard = await GetCurrentLeaderboardByStart(1);
+    }
+
     public async Task<Models.LeaderboardResult> GetCurrentLeaderboardByStart(int startPosition) =>
-        CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), startPosition, DEFAULT_COUNT, null, null, null);
+    CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), startPosition, DEFAULT_COUNT, null, null, null);
 }
