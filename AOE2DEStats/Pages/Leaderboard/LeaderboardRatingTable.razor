@@ -1,6 +1,7 @@
 ﻿@inject HttpClient Http
 @inject Services.ILeaderboardService leaderboardService
 @inject Services.IStringServices stringService
+@inject ILocalStorageService localStorage
 
 @if (CurrentLeaderboard == null)
 {
@@ -51,10 +52,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        StateHasChanged();
+        //StateHasChanged();
         //CurrentLeaderboard = await leaderboard.GetLeaderboardAsync(int.Parse(leaderboardId), 1, DEFAULT_COUNT, null, null, null);
         //CurrentLeaderboard = await GetCurrentLeaderboardByStart(1);
-        GeneralData = await stringService.GetStringsAsync("en");
+        //GeneralData = await stringService.GetStringsAsync("en");
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
     }
 
     protected override async Task OnParametersSetAsync()

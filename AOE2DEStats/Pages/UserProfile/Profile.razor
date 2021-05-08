@@ -1,33 +1,6 @@
 ﻿@page "/profile/{profile_id}"
 @inject HttpClient Http
 @inject Services.ILeaderboardService leaderboardService
-<h3>Profile</h3>
-
-@*<div class="container-fluid">
-        <div class="row p-2 border">
-            <div class="col-md-4 p-2 border">
-                <div class="card bg-dark text-white">
-
-                    <div class="card-header">
-                        @steamId
-                    </div>
-                    <div class="card">
-                        <div class="card-img">
-                            <img src="~/icon-512.png" />
-                        </div>
-                        <div class="card-body">
-                            <span class="oi-person">KrapsuS</span>
-                            <span class="oi-code">1103</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8 p-2 border">
-                <UserMatches steamId="@steamId" />
-            </div>
-        </div>
-    </div>*@
-
 <!-- new design -->
 @if (CurrentLeaderboard == null)
 {
@@ -55,7 +28,7 @@ else
                 </div>
             </div>
             <div class="col">
-                <UserMatches profile_id="@profile_id" countMatches="10"/>
+                <UserMatches profile_id="@profile_id" countMatches="10" />
             </div>
         </div>
     </div>
@@ -70,8 +43,6 @@ else
     [Inject]
     protected Services.ILeaderboardService ApiLeaderboard { get; set; }
 
-
-
     private Models.LeaderboardResult CurrentLeaderboard;
 
     protected override async Task OnInitializedAsync()
@@ -79,6 +50,4 @@ else
         StateHasChanged();
         CurrentLeaderboard = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
     }
-
-
 }

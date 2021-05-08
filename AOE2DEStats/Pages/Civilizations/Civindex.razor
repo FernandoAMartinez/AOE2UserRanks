@@ -1,6 +1,7 @@
 ﻿@page  "/civilizations"
 @inject HttpClient Http
 @inject Services.IStringServices stringService
+@inject ILocalStorageService localStorage
 
 <h3>Civindex</h3>
 <div class="container-fluid">
@@ -62,8 +63,12 @@
     //private const string API_STRINGS = "https://aoe2.net/api/strings";
     protected override async Task OnInitializedAsync()
     {
-        GeneralData = await stringService.GetStringsAsync("en");
+        //GeneralData = await stringService.GetStringsAsync("en");
         //JsonResult = await Http.GetStringAsync($"{API_STRINGS}?game={GAME}&language={Lang}");
         //GeneralData = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.GeneralData>(JsonResult);
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
     }
 }

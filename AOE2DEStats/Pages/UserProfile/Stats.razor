@@ -1,6 +1,6 @@
 ﻿@inject Services.IPlayerServices playerService
+@inject ILocalStorageService localStorage
 
-<h3>Stats</h3>
 @if (currentProfile == null)
 {
     <div class="text-center">
@@ -13,37 +13,62 @@ else
 {
     <div class="container-fluid">
         <div class="card text-center text-dark shadow">
-            <div class="card-header font-weight-bold">
-                <span class="float-left">#@currentProfile.Rank</span>
+            <div class="card-header font-weight-bold row">
+                <div class="col">
+                    <span class="float-left">#@currentProfile.Rank</span>
+                </div>
                 @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
-                @currentProfile.Name
+                <div class="col">
+
+                    @currentProfile.Name
+                </div>
+                <div class="col">
+                    <img class="img-fluid float-end rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
+                </div>
             </div>
             <div class="card-img">
                 <!-- agregar imagen de steam -->
                 <img src="@string.Format($"/img/aoe2decivs/Aztecs.png")" width="96" height="96" class="img-thumbnail" />
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
-                </div>
-                <div class="row">
-                    <div class="col border">
-                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
-                        @currentProfile.Rating
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
                     </div>
-                </div>
-                <div class=" row">
-                    <div class="col border bg-success text-dark font-weight-bold">Win</div>
-                    <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
-                </div>
-                <div class=" row">
-                    <div class="col border">
-                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
-                        @currentProfile.Wins
+                    <div class="row">
+                        <div class="col border">
+                            @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
+                            @currentProfile.Rating
+                        </div>
                     </div>
-                    <div class="col border">
-                        @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
-                        @currentProfile.Losses
+
+                    <!--
+                    <div class="container">
+
+                    <div class=" row">
+                        <div class="col border bg-success text-dark font-weight-bold">Win</div>
+                        <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
+                    </div>
+
+                        <div class=" row">
+                        <div class="col border">-->
+                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
+                    <!-- currentProfile.Wins
+                    </div>
+                    <div class="col border">-->
+                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
+                    <!-- currentProfile.Losses
+                        </div>
+                    </div>
+                    </div>
+                                -->
+
+                    <div class="progress">
+                        @*<div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>*@
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: @GetWinRatePercentage(currentProfile)%" aria-valuenow="@GetWinRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Wins Wins</div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: @GetLossRatePercentage(currentProfile)%" aria-valuenow="@GetLossRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Losses Lost</div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: @GetDropRatePercentage(currentProfile)%" aria-valuenow="@GetDropRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Drops Drop</div>
                     </div>
                 </div>
             </div>
@@ -71,11 +96,11 @@ else
                         <div class="col order-first border" style="background-color: #405BFE;">1</div>
                         <div class="w- w-100 mt-1 mb-1"></div>
                         <div class="col order-last border">
-                        @{
-                            LastMatches.Where(x => x.Ranked == true).
-                                Select(x => x.Players.Where(
-                                    x => x.ProfileId == int.Parse(profile_id)).Select(x => x.Color).ToList());
-                        }
+                            @{
+                                LastMatches.Where(x => x.Ranked == true).
+                                    Select(x => x.Players.Where(
+                                        x => x.ProfileId == int.Parse(profile_id)).Select(x => x.Color).ToList());
+                            }
                         </div>
                     </div>
                     <div class="col-3">
@@ -162,11 +187,20 @@ else
         LastMatches = await ApiPlayers.GetMatchHistoryAsync(0, 25, null, profile_id, null, null);
     }
 
-    protected override void OnParametersSet()
+
+    protected async override Task OnParametersSetAsync()
     {
-        currentProfile = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).FirstOrDefault();
-        base.OnParametersSet();
+        var storedProfile = await localStorage.GetItemAsync<Models.Profile>("currentProfile");
+        if (storedProfile == null)
+            currentProfile = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).FirstOrDefault();
+        else currentProfile = storedProfile;
     }
+
+    //protected override void OnParametersSet()
+    //{
+    //    currentProfile = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).FirstOrDefault();
+    //    base.OnParametersSet();
+    //}
 
     private bool IsReachingHighestRank()
     {
@@ -185,4 +219,13 @@ else
         (high != null && low != null)
         ? high - low
         : 0;
+
+    private int? GetWinRatePercentage(Models.Profile profile) =>
+            (profile.Wins * 100) / profile.Games;
+
+    private int? GetLossRatePercentage(Models.Profile profile) =>
+                (profile.Losses * 100) / profile.Games;
+
+    private int? GetDropRatePercentage(Models.Profile profile) =>
+        (profile.Drops * 100) / profile.Games;
 }

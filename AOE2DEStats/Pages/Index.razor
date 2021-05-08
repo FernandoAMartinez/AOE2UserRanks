@@ -1,5 +1,7 @@
 ﻿@page "/"
 @inject Services.IStringServices stringService
+@inject Services.ILeaderboardService leaderboardService
+@inject ILocalStorageService localStorage
 
 <div class="container">
     <div class="jumbotron text-dark">
@@ -11,16 +13,89 @@
     </div>
 </div>
 
+<div class="container">
+    <form>
+        <label class="form-label" for="searchUser">Search User</label>
+        <span>@ListedProfiles.Count</span>
+        <div class=" input-group mb-3">
+            <input type="search" class="form-control" id="searchUser" @bind="ProfileName" />
+            <button class="btn btn-primary" type="button" @onclick="SearchProfileByNameAsync">Search</button>
+        </div>
+    </form>
+
+    <DatagridView Items="ListedProfiles" Context="profile">
+        <TableHeader>
+            <th>#Rank</th>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Country</th>
+            <th>Games</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th></th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@profile.Rank</td>
+            <td> <a href="@string.Format($"/profile/{profile.ProfileId.ToString()}")">@profile.Name</a> </td>
+            <td>@profile.Rating</td>
+            <td><img src="https://www.countryflags.io/@profile.Country/flat/32.png"></td>
+            <td>@profile.Games</td>
+            <td>@profile.Wins</td>
+            <td>@profile.Losses</td>
+            <td><button class="btn btn-outline-danger" type="button" @onclick="@(() => UpdateListedProfiles(profile))">Remove</button></td>
+        </RowTemplate>
+    </DatagridView>
+</div>
 
 @code {
 
-    [Inject]
-    protected Services.IStringServices ApiStrings { get; set; }
+    [Inject] protected Services.IStringServices ApiStrings { get; set; }
+
+    [Inject] protected Services.ILeaderboardService ApiLeaderboard { get; set; }
 
     private Models.GeneralData GeneralData;
 
+    public string ProfileName { get; set; }
+
+    private List<Profile> ListedProfiles = new List<Profile>();
+
     protected override async Task OnInitializedAsync()
     {
-        GeneralData = await ApiStrings.GetStringsAsync("en");
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await ApiStrings.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var storedProfiles = await localStorage.GetItemAsync<List<Profile>>("storedProfiles");
+        if (storedProfiles != null)
+        {
+            ListedProfiles = storedProfiles;
+        }
+    }
+
+    private async void SearchProfileByNameAsync()
+    {
+
+        if (!ListedProfiles.Any(x => x.Name == ProfileName))
+        {
+            var leaderboardResult = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, ProfileName, null, null);
+            var profile = leaderboardResult.Leaderboard.FirstOrDefault();
+            if (profile != null)
+            {
+                ListedProfiles.Add(profile);
+            }
+
+            await localStorage.SetItemAsync<List<Profile>>("storedProfiles", ListedProfiles);
+        }
+    }
+
+    private async void UpdateListedProfiles(Profile profile)
+    {
+        ListedProfiles.Remove(profile);
+        await localStorage.SetItemAsync<List<Profile>>("storedProfiles", ListedProfiles);
+
     }
 }
