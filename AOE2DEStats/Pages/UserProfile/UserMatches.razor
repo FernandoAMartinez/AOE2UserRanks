@@ -1,8 +1,8 @@
 ﻿@page "/profile/{profile_id}/matches"
 @inject Services.IStringServices stringService
 @inject Services.IPlayerServices playerService
+@inject ILocalStorageService localStorage
 
-<h3>UserMatches</h3>
 @if (LastMatches == null)
 {
     <div class="container-fluid row text-center">
@@ -115,6 +115,7 @@ else
             </td>
             <td>
                 <button class="btn btn-primary" @onclick="() => Modal.Open()">Detail</button>
+
                 <Modal @ref="Modal">
                     <Title>
                         <em>
@@ -122,7 +123,7 @@ else
                         </em>
                     </Title>
                     <Body>
-                        <AOE2DEStats.Pages.Matches.MatchDetail Uuid="@match.MatchUUID"/>
+                        <AOE2DEStats.Pages.Matches.MatchDetail Uuid="@match.MatchUUID" />
                     </Body>
                     <Footer>
                         <button type="button" class="btn btn-primary">Save changes</button>
@@ -133,7 +134,7 @@ else
         </RowTemplate>
     </DatagridView>
 
-    <div class="font-italic">
+    <div class="mt-2 font-italic">
         <a href="@string.Format($"/profile/{profile_id}/matches")">Go to full list of matches...</a>
     </div>
 }
@@ -161,11 +162,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (countMatches == 0)
-        {
-            countMatches = 50;
-        }
-        GeneralData = await ApiStrings.GetStringsAsync("en");
+        //GeneralData = await ApiStrings.GetStringsAsync("en");
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (countMatches == 0) countMatches = 50;
         LastMatches = await ApiPlayer.GetMatchHistoryAsync(0, countMatches, null, profile_id, null, null);
     }
 
