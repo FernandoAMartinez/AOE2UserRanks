@@ -3,25 +3,39 @@
 @inject Services.ILeaderboardService leaderboardService
 @inject ILocalStorageService localStorage
 
-<div class="container">
-    <div class="jumbotron text-dark">
-        <h1 class="display-4">Welcome to AOE2 Ladder Stats!</h1>
-        <p class="lead">This site is still in development, feel free to test it and any comment is welcome.</p>
-        <hr class="my-4">
-        <p>For issues and ideas please consider open a Github Issue.</p>
-        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+<div class="container-fluid">
+    <div class="alert text-dark" style="background-color: #ffbb33ff;">
+        <h3 class="alert-heading">
+            Welcome to AOE2 Ladder Stats!
+        </h3>
+        <p>This site is still in development, feel free to test it and any comment is welcome.</p>
+
     </div>
 </div>
 
-<div class="container">
-    <form>
-        <label class="form-label" for="searchUser">Search User</label>
-        <span>@ListedProfiles.Count</span>
-        <div class=" input-group mb-3">
-            <input type="search" class="form-control" id="searchUser" @bind="ProfileName" />
-            <button class="btn btn-primary" type="button" @onclick="SearchProfileByNameAsync">Search</button>
+@*<div class="container">
+        <div class="jumbotron text-dark">
+            <h1 class="display-4">Welcome to AOE2 Ladder Stats!</h1>
+            <p class="lead"></p>
+            <hr class="my-4">
+            <p>For issues and ideas please consider open a Github Issue.</p>
+            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
         </div>
-    </form>
+    </div>*@
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <form>
+                <label class="form-label" for="searchUser">Search User</label>
+                <span>@ListedProfiles.Count</span>
+                <div class=" input-group mb-3">
+                    <input type="search" class="form-control" id="searchUser" @bind="ProfileName" />
+                    <button class="btn btn-primary" type="button" @onclick="SearchProfileByNameAsync">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <DatagridView Items="ListedProfiles.OrderBy(x => x.Rank).ToList()" Context="profile">
         <TableHeader>
