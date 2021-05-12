@@ -1,6 +1,6 @@
 ﻿@page "/profile/{ProfileId}/matches"
-@inject IStringServices stringService
-@inject IPlayerServices playerService
+@inject Services.IStringServices stringService
+@inject Services.IPlayerServices playerService
 @inject ILocalStorageService localStorage
 
 @if (LastMatches == null)
