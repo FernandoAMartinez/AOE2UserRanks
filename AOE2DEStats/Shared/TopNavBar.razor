@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light bg-light mt-3 ml-3 mr-3 fixed-top shadow-lg rounded">
+﻿@inject ILocalStorageService localStorage
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mt-3 ml-3 mr-3 fixed-top shadow-lg rounded">
     <!-- Navbar content -->
     <div class="container-fluid">
 
@@ -28,7 +30,7 @@
                     <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
                         <!-- onclick="ToggleProfileNav"-->
                         <span class="oi oi-person" aria-hidden="true"></span> Profile
-                        <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                        <span class="badge rounded-pill badge-notification bg-danger">@ListedProfiles.Count</span>
                     </NavLink>
                 </li>
 
@@ -54,7 +56,23 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
+    private List<Profile> ListedProfiles;
+
     //private bool expandProfileNav = false;
     //private void ToggleProfileNav() => expandProfileNav = !expandProfileNav;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListedProfiles = new List<Profile>();
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var storedProfiles = await localStorage.GetItemAsync<List<Profile>>("storedProfiles");
+        if (storedProfiles != null)
+        {
+            ListedProfiles = storedProfiles;
+        }
+    }
 
 }

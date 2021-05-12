@@ -1,53 +1,60 @@
-﻿@page "/profile/{profile_id}"
-@inject HttpClient Http
-@inject Services.ILeaderboardService leaderboardService
-<!-- new design -->
-@if (CurrentLeaderboard == null)
-{
-    <div class="text-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden"></span>
+﻿@page "/profile/{ProfileId}"
+    @*@inject Services.ILeaderboardService leaderboardService*@
+    <!-- new design -->
+    @*@if (CurrentLeaderboard == null)
+        {
+        }
+        else
+        {
+        }*@
+    <!--
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
         </div>
-    </div>
-}
-else
-{
+    -->
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
                 <div class="row border-success">
                     <!-- Profile Info -->
-                    <CascadingValue Name="ProfileId" Value="@profile_id">
-                        <CascadingValue Name="CurrentLeaderboard" Value="@CurrentLeaderboard">
-                            <Stats />
-                        </CascadingValue>
-                    </CascadingValue>
+                    @*<CascadingValue Name="ProfileId" Value="@ProfileId">
+                            <CascadingValue Name="CurrentLeaderboard" Value="@CurrentLeaderboard">
+                                <Stats />
+                            </CascadingValue>
+                        </CascadingValue>*@
+
+                    <Stats ProfileId="@ProfileId" />
                 </div>
                 <div class="row border-danger">
                     <!-- Civilization Stats -->
                 </div>
             </div>
             <div class="col">
-                <UserMatches profile_id="@profile_id" countMatches="10" />
+                <UserMatches ProfileId="@ProfileId" countMatches="10" />
             </div>
         </div>
     </div>
 
-}
 
+    @code {
+        [Parameter]
+        public string ProfileId { get; set; }
 
-@code {
-    [Parameter]
-    public string profile_id { get; set; }
+        //[Inject]
+        //protected Services.ILeaderboardService ApiLeaderboard { get; set; }
 
-    [Inject]
-    protected Services.ILeaderboardService ApiLeaderboard { get; set; }
+        //private Models.LeaderboardResult CurrentLeaderboard;
 
-    private Models.LeaderboardResult CurrentLeaderboard;
+        //protected override async Task OnInitializedAsync()
+        //{
+        //    CurrentLeaderboard = await leaderboardService.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
+        //}
 
-    protected override async Task OnInitializedAsync()
-    {
-        StateHasChanged();
-        CurrentLeaderboard = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
+        //protected override async Task OnParametersSetAsync()
+        //{
+        //    CurrentLeaderboard = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, null, null, profile_id);
+        //    StateHasChanged();
+        //}
     }
-}

@@ -1,4 +1,6 @@
-﻿@inject Services.IPlayerServices playerService
+﻿@inject IPlayerServices playerService
+@inject IStringServices stringService
+@inject ILeaderboardService leaderboardService
 @inject ILocalStorageService localStorage
 
 @if (currentProfile == null)
@@ -12,79 +14,74 @@
 else
 {
     <div class="container-fluid">
+        <!-- Profile Stats Component -->
         <div class="card text-center text-dark shadow">
-            <div class="card-header font-weight-bold row">
-                <div class="col">
-                    <span class="float-left">#@currentProfile.Rank</span>
-                </div>
-                @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Name).First()*@
-                <div class="col">
-
-                    @currentProfile.Name
-                </div>
-                <div class="col">
-                    <img class="img-fluid float-end rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
+            <div class="card-header">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <span class="float-left">#@currentProfile.Rank</span>
+                        </div>
+                        <div class="col-8">
+                            <img class="img-fluid rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
+                            @currentProfile.Name
+                        </div>
+                        <div class="col form-check form-switch">
+                            <div class="float-right">
+                                <input class="form-check-input" type="checkbox" value="" id="userSelected" checked="@pinnedProfile" @onchange="EventArgs => { IsProfilePinned(EventArgs.Value); }" />
+                                <label class="form-check-label" for="userSelected">Pin</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="card-img">
-                <!-- agregar imagen de steam -->
                 <img src="@string.Format($"/img/aoe2decivs/Aztecs.png")" width="96" height="96" class="img-thumbnail" />
+                <!-- agregar imagen de steam -->
             </div>
             <div class="card-body">
                 <div class="container">
-
-                    <div class="row">
-                        <div class="col border bg-primary text-dark font-weight-bold">Current Rating</div>
-                    </div>
-                    <div class="row">
-                        <div class="col border">
-                            @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First()*@
-                            @currentProfile.Rating
-                        </div>
-                    </div>
-
-                    <!--
-                    <div class="container">
-
-                    <div class=" row">
-                        <div class="col border bg-success text-dark font-weight-bold">Win</div>
-                        <div class="col border bg-danger text-dark font-weight-bold">Lose</div>
-                    </div>
-
-                        <div class=" row">
-                        <div class="col border">-->
-                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Wins).First()*@
-                    <!-- currentProfile.Wins
-                    </div>
-                    <div class="col border">-->
-                    @*@CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Losses).First()*@
-                    <!-- currentProfile.Losses
-                        </div>
-                    </div>
-                    </div>
-                                -->
-
-                    <div class="progress">
-                        @*<div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>*@
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: @GetWinRatePercentage(currentProfile)%" aria-valuenow="@GetWinRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Wins Wins</div>
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: @GetLossRatePercentage(currentProfile)%" aria-valuenow="@GetLossRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Losses Lost</div>
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: @GetDropRatePercentage(currentProfile)%" aria-valuenow="@GetDropRatePercentage(currentProfile)" aria-valuemin="0" aria-valuemax="100">@currentProfile.Drops Drop</div>
-                    </div>
+                    <DatagridView Items="ProfileLeaderboards.Where(x => x.CountResult != 0).ToList()" Context="l">
+                        <TableHeader>
+                            <th>Type</th>
+                            <th>Rating</th>
+                            <th>Wins</th>
+                            <th>Loses</th>
+                        </TableHeader>
+                        <RowTemplate>
+                            <td>
+                                @GeneralData.Leaderboards.Where(x => x.Id == l.LeaderboardId).Select(x => x.Name).First()
+                                @if (IsReachingHighestRank(l))
+                                    {
+                                    <span class="badge badge-success">~50</span>
+                                    }
+                            </td>
+                            <td>
+                                @l.Leaderboard.Select(x => x.Rating).First()
+                            </td>
+                            <td>
+                                @l.Leaderboard.Select(x => x.Rating).First()
+                            </td>
+                            <td>
+                                @l.Leaderboard.Select(x => x.Wins).First()
+                            </td>
+                        </RowTemplate>
+                    </DatagridView>
                 </div>
             </div>
             <div class="card-footer">
                 <div class="row text-center">
-                    <button class="btn btn-primary col mr-1">
-                        <a href="https://steamcommunity.com/profiles/@currentProfile.SteamId">
-                            Steam Profile
-                        </a>
-                    </button>
-                    <button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>
-                    <button class="btn btn-primary col ml-1">Age of Empires Profile</button>
+                    <a class="btn btn-outline-primary col mr-1" href="@string.Format($"https://steamcommunity.com/profiles/{currentProfile.SteamId}")">
+                        Steam Profile
+                    </a>
+                    @*<button class="btn btn-primary col ml-1 mr-1">AOE2Recs</button>*@
+                    @*<button class="btn btn-primary col ml-1">Age of Empires Profile</button>*@
                 </div>
 
             </div>
         </div>
+
         <!-- New Component: Team Positions -->
         <div class="card text-center text-dark shadow mt-3">
             <div class="card-header font-weight-bold">
@@ -92,57 +89,52 @@ else
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #405BFE;">1</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">
-                            @{
-                                LastMatches.Where(x => x.Ranked == true).
-                                    Select(x => x.Players.Where(
-                                        x => x.ProfileId == int.Parse(profile_id)).Select(x => x.Color).ToList());
-                            }
+                    @for (int i = 1; i < 9; i++)
+                    {
+                        <div class="col-3">
+                            <div class="card">
+                                <!-- Change Color -->
+                                @switch (i)
+                                {
+                                    case 1:
+                                        <div class="card-header" style="background-color: #405BFE;">@i</div>
+                                        break;
+                                    case 2:
+                                        <div class="card-header" style="background-color: #FF0000;">@i</div>
+                                        break;
+                                    case 3:
+                                        <div class="card-header" style="background-color: #00FF00;">@i</div>
+                                        break;
+                                    case 4:
+                                        <div class="card-header" style="background-color: #FFFF00;">@i</div>
+                                        break;
+                                    case 5:
+                                        <div class="card-header" style="background-color: #00FFFF;">@i</div>
+                                        break;
+                                    case 6:
+                                        <div class="card-header" style="background-color: #FF57B3;">@i</div>
+                                        break;
+                                    case 7:
+                                        <div class="card-header" style="background-color: #797979;">@i</div>
+                                        break;
+                                    case 8:
+                                        <div class="card-header" style="background-color: #FF9600;">@i</div>
+                                        break;
+                                }
+                                @*<div class="w- w-100 mt-1 mb-1"></div>*@
+                                <div class="card-body">
+                                    <span> @GetTeamPositionCount(LastMatches, i) </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #FF0000;">2</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">42</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #00FF00;">3</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">2</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #FFFF00;">4</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">54</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #00FFFF;">5</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">34</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #FF57B3;">6</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">1</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #797979;">7</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">52</div>
-                    </div>
-                    <div class="col-3">
-                        <div class="col order-first border" style="background-color: #FF9600;">8</div>
-                        <div class="w- w-100 mt-1 mb-1"></div>
-                        <div class="col order-last border">4</div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
 
-        <!-- New Component: Last Civs Win Rate-->
+        <!-- New Component: Last Civs Win Rate -->
+        <!-- To be defined -->
+        <!--
         <div class="card text-center text-dark shadow mt-3">
             <div class="card-header font-weight-bold">
                 Civilizations Win Rates
@@ -150,50 +142,74 @@ else
             <div class="card-body">
             </div>
         </div>
+        -->
     </div>
 
-    @if (IsReachingHighestRank())
-    {
-        <div class="container text-center mt-3">
-            <div class="alert alert-success" role="alert">
-                @currentProfile.Name is going to reach it's highest rank!
+    @*@if (IsReachingHighestRank())
+        {
+            <div class="container text-center mt-3">
+                <div class="alert alert-success" role="alert">
+                    @currentProfile.Name is going to reach it's highest rank!
+                </div>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="container text-center mt-3">
-            <div class="alert alert-danger" role="alert">
-                @currentProfile.Name is @GetDifferenceFromHighestRating(currentProfile.HighestRating, currentProfile.Rating) of it's highest rank!
+        }
+        else
+        {
+            <div class="container text-center mt-3">
+                <div class="alert alert-danger" role="alert">
+                    @currentProfile.Name is @GetDifferenceFromHighestRating(currentProfile.HighestRating, currentProfile.Rating) of it's highest rank!
+                </div>
             </div>
-        </div>
-    }
+        }*@
 }
 @code {
     public Models.Profile currentProfile { get; set; }
     private Models.Match[] LastMatches;
+    private bool pinnedProfile = false;
 
-    [Inject]
-    protected Services.IPlayerServices ApiPlayers { get; set; }
+    [Parameter]
+    public string ProfileId { get; set; }
 
-    [CascadingParameter(Name = "ProfileId")]
-    public string profile_id { get; set; }
+    private GeneralData GeneralData;
 
-    [CascadingParameter(Name = "CurrentLeaderboard")]
-    public Models.LeaderboardResult CurrentLeaderboard { get; set; }
+    private List<LeaderboardResult> ProfileLeaderboards;
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        LastMatches = await ApiPlayers.GetMatchHistoryAsync(0, 25, null, profile_id, null, null);
-    }
+        //currentProfile = null;
+        //Obtain the strings of the app from the LocalStorage, or if missing, call API
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
 
+        //Retrieve the last 25 matches of the user
+        LastMatches = await playerService.GetMatchHistoryAsync(0, 25, null, ProfileId, null, null);
+
+    }
 
     protected async override Task OnParametersSetAsync()
     {
-        var storedProfile = await localStorage.GetItemAsync<Models.Profile>("currentProfile");
-        if (storedProfile == null)
-            currentProfile = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).FirstOrDefault();
-        else currentProfile = storedProfile;
+
+        //var storedProfile = await localStorage.GetItemAsync<Models.Profile>("currentProfile");
+        //if (storedProfile == null)
+        //{
+        var profile = await leaderboardService.GetLeaderboardAsync(3, 1, 1, null, null, ProfileId);
+        currentProfile = profile.Leaderboard.FirstOrDefault(x => x.ProfileId == int.Parse(ProfileId));
+        //}
+        //await localStorage.SetItemAsync<Models.Profile>("currentProfile", currentProfile);
+
+        //Retrieve the leaderboards for the user
+        ProfileLeaderboards = new List<LeaderboardResult>();
+        ProfileLeaderboards = await GetLeaderboardsByUser();
+
+        //Set that the profile is pinned
+        var storedProfiles = await localStorage.GetItemAsync<List<Models.Profile>>("storedProfiles");
+        if (storedProfiles != null)
+            if (storedProfiles.Any(x => x.ProfileId == currentProfile.ProfileId))
+                pinnedProfile = true;
+
+        StateHasChanged();
     }
 
     //protected override void OnParametersSet()
@@ -202,10 +218,13 @@ else
     //    base.OnParametersSet();
     //}
 
-    private bool IsReachingHighestRank()
+    private bool IsReachingHighestRank(LeaderboardResult leaderboard)
     {
-        int? highest = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.HighestRating).First();
-        int? current = @CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First();
+        //var selectedLeaderboard = ProfileLeaderboards.Where(x => x.LeaderboardId == leaderboardId).FirstOrDefault();
+        //int? highest = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.HighestRating).First();
+        //int? current = CurrentLeaderboard.Leaderboard.Where(x => x.ProfileId == Convert.ToInt32(profile_id) && x.ProfileId != null).Select(x => x.Rating).First();
+        int? highest = leaderboard.Leaderboard.Select(x => x.HighestRating).First();
+        int? current = leaderboard.Leaderboard.Select(x => x.Rating).First();
         int? difference = GetDifferenceFromHighestRating(highest, current);
         if (difference != null)
         {
@@ -228,4 +247,51 @@ else
 
     private int? GetDropRatePercentage(Models.Profile profile) =>
         (profile.Drops * 100) / profile.Games;
+
+    private int GetTeamPositionCount(Match[] matches, int color)
+    {
+        int count = 0;
+        Models.Profile[] profiles;
+        foreach (var match in matches)
+        {
+            profiles = match.Players;
+            count += profiles.Where(x => x.ProfileId == int.Parse(ProfileId)).Where(x => x.Color == color).Count();
+        }
+        return count;
+    }
+
+    private async Task<List<LeaderboardResult>> GetLeaderboardsByUser()
+    {
+        var leaderboards = new List<LeaderboardResult>();
+        foreach (var id in GeneralData.Leaderboards.Select(x => x.Id).ToList())
+        {
+            leaderboards.Add(await leaderboardService.GetLeaderboardAsync(id, 1, 1, null, null, ProfileId));
+        }
+        return leaderboards;
+    }
+
+    private async void IsProfilePinned(object check)
+    {
+        var storedProfiles = await localStorage.GetItemAsync<List<Models.Profile>>("storedProfiles");
+
+        if ((bool)check)
+        {
+            pinnedProfile = true;
+            if (!storedProfiles.Any(x => x.ProfileId == currentProfile.ProfileId))
+            {
+                storedProfiles.Add(currentProfile);
+                await localStorage.SetItemAsync<List<Models.Profile>>("storedProfiles", storedProfiles);
+            }
+        }
+        else
+        {
+            pinnedProfile = false;
+            if (storedProfiles.Any(x => x.ProfileId == currentProfile.ProfileId))
+            {
+                storedProfiles.Remove(storedProfiles.FirstOrDefault(x => x.ProfileId == currentProfile.ProfileId));
+                await localStorage.SetItemAsync<List<Models.Profile>>("storedProfiles", storedProfiles);
+            }
+
+        }
+    }
 }

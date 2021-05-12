@@ -23,7 +23,7 @@
         </div>
     </form>
 
-    <DatagridView Items="ListedProfiles" Context="profile">
+    <DatagridView Items="ListedProfiles.OrderBy(x => x.Rank).ToList()" Context="profile">
         <TableHeader>
             <th>#Rank</th>
             <th>Name</th>
@@ -49,20 +49,17 @@
 
 @code {
 
-    [Inject] protected Services.IStringServices ApiStrings { get; set; }
-
-    [Inject] protected Services.ILeaderboardService ApiLeaderboard { get; set; }
-
     private Models.GeneralData GeneralData;
 
     public string ProfileName { get; set; }
 
-    private List<Profile> ListedProfiles = new List<Profile>();
+    private List<Profile> ListedProfiles;
 
     protected override async Task OnInitializedAsync()
     {
+        ListedProfiles = new List<Profile>();
         var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
-        if (storedStrings == null) GeneralData = await ApiStrings.GetStringsAsync("en");
+        if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
         else GeneralData = storedStrings;
         await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
     }
@@ -79,23 +76,23 @@
     private async void SearchProfileByNameAsync()
     {
 
-        if (!ListedProfiles.Any(x => x.Name == ProfileName))
+        if (ListedProfiles.Any(x => x.Name == ProfileName) != true)
         {
-            var leaderboardResult = await ApiLeaderboard.GetLeaderboardAsync(3, 1, 1, ProfileName, null, null);
+            var leaderboardResult = await leaderboardService.GetLeaderboardAsync(3, 1, 1, ProfileName, null, null);
             var profile = leaderboardResult.Leaderboard.FirstOrDefault();
             if (profile != null)
             {
                 ListedProfiles.Add(profile);
+                await localStorage.SetItemAsync<List<Models.Profile>>("storedProfiles", ListedProfiles);
             }
 
-            await localStorage.SetItemAsync<List<Profile>>("storedProfiles", ListedProfiles);
         }
     }
 
-    private async void UpdateListedProfiles(Profile profile)
+    private async void UpdateListedProfiles(Models.Profile profile)
     {
         ListedProfiles.Remove(profile);
-        await localStorage.SetItemAsync<List<Profile>>("storedProfiles", ListedProfiles);
+        await localStorage.SetItemAsync<List<Models.Profile>>("storedProfiles", ListedProfiles);
 
     }
 }

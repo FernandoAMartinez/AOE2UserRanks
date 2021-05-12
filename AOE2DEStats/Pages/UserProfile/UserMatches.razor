@@ -1,6 +1,6 @@
-﻿@page "/profile/{profile_id}/matches"
-@inject Services.IStringServices stringService
-@inject Services.IPlayerServices playerService
+﻿@page "/profile/{ProfileId}/matches"
+@inject IStringServices stringService
+@inject IPlayerServices playerService
 @inject ILocalStorageService localStorage
 
 @if (LastMatches == null)
@@ -21,14 +21,14 @@ else
             <th>Map</th>
             <th>Server</th>
             <th>Result</th>
-            <th>Match Detail</th>
+            @*<th>Match Detail</th>*@
         </TableHeader>
         <RowTemplate>
             <td class="text-center">
                 @GeneralData.Leaderboards.Where(x => x.Id == match.LeaderboardId).Select(x => x.Name).FirstOrDefault()
             </td>
             <td class="text-center">
-                @match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Rating).FirstOrDefault()
+                @match.Players.Where(x => x.ProfileId == Convert.ToInt32(ProfileId)).Select(x => x.Rating).FirstOrDefault()
             </td>
             <td class="text-center">
                 <div class="row text-center justify-content-center">
@@ -100,11 +100,11 @@ else
                 @match.Server
             </td>
             <td class="text-center">
-                @if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Won).FirstOrDefault() == null)
+                @if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(ProfileId)).Select(x => x.Won).FirstOrDefault() == null)
                     {
                     <span class="badge bg-warning text-dark">Drop</span>
                     }
-                    else if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(profile_id)).Select(x => x.Won).FirstOrDefault() == true)
+                    else if (match.Players.Where(x => x.ProfileId == Convert.ToInt32(ProfileId)).Select(x => x.Won).FirstOrDefault() == true)
                     {
                     <span class="badge bg-success">Won</span>
                     }
@@ -113,29 +113,12 @@ else
                     <span class="badge bg-danger">Lost</span>
                     }
             </td>
-            <td>
-                <button class="btn btn-primary" @onclick="() => Modal.Open()">Detail</button>
 
-                <Modal @ref="Modal">
-                    <Title>
-                        <em>
-                            @match.MatchUUID
-                        </em>
-                    </Title>
-                    <Body>
-                        <AOE2DEStats.Pages.Matches.MatchDetail Uuid="@match.MatchUUID" />
-                    </Body>
-                    <Footer>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Modal.Close()">Close</button>
-                    </Footer>
-                </Modal>
-            </td>
         </RowTemplate>
     </DatagridView>
 
     <div class="mt-2 font-italic">
-        <a href="@string.Format($"/profile/{profile_id}/matches")">Go to full list of matches...</a>
+        <a href="@string.Format($"/profile/{ProfileId}/matches")">Go to full list of matches...</a>
     </div>
 }
 
@@ -143,26 +126,18 @@ else
     private Modal Modal { get; set; }
 
     [Parameter]
-    public string profile_id { get; set; }
+    public string ProfileId { get; set; }
 
     [Parameter]
     public int countMatches { get; set; }
 
-    [Inject]
-    protected Services.IStringServices ApiStrings { get; set; }
-
-    [Inject]
-    protected Services.IPlayerServices ApiPlayer { get; set; }
-
     private int? previousTeam = 1;
     private Models.GeneralData GeneralData;
     private Models.Match[] LastMatches;
-    //private int countMatches = 25;
 
 
     protected override async Task OnInitializedAsync()
     {
-        //GeneralData = await ApiStrings.GetStringsAsync("en");
         var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
         if (storedStrings == null) GeneralData = await stringService.GetStringsAsync("en");
         else GeneralData = storedStrings;
@@ -172,7 +147,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         if (countMatches == 0) countMatches = 50;
-        LastMatches = await ApiPlayer.GetMatchHistoryAsync(0, countMatches, null, profile_id, null, null);
+        LastMatches = await playerService.GetMatchHistoryAsync(0, countMatches, null, ProfileId, null, null);
     }
 
     //private int GetDeltaRating(int previousRating, int currentRating) => currentRating - previousRating;
