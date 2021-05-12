@@ -1,49 +1,52 @@
 ﻿@inject ILocalStorageService localStorage
+<!-- class="navbar navbar-expand-lg navbar-light bg-light mt-3 ml-3 mr-3 fixed-top shadow-lg rounded" -->
+<div class="card  mt-3 ml-3 mr-3 fixed-top shadow-lg rounded border-white">
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #8C1823;
+    ">
+        <!-- Navbar content -->
+        <div class="container-fluid">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light mt-3 ml-3 mr-3 fixed-top shadow-lg rounded">
-    <!-- Navbar content -->
-    <div class="container-fluid">
+            <a class="navbar-brand" href="">DE Ladder</a>
+            <button class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <a class="navbar-brand" href="">DE Ladder</a>
-        <button class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <div class="@NavMenuCssClass">
+                <ul class="navbar-nav mb-2 mb-lg-0 flex-row">
+                    <!-- Index -->
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <span class="oi oi-home" aria-hidden="true"></span> Home
+                        </NavLink>
+                    </li>
 
-        <div class="@NavMenuCssClass">
-            <ul class="navbar-nav mb-2 mb-lg-0 flex-row">
-                <!-- Index -->
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-home" aria-hidden="true"></span> Home
-                    </NavLink>
-                </li>
+                    <!-- Civilizations -->
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="civilizations">
+                            <span class="oi oi-shield" aria-hidden="true"></span> Civilziations
+                        </NavLink>
+                    </li>
 
-                <!-- Civilizations -->
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="civilizations">
-                        <span class="oi oi-shield" aria-hidden="true"></span> Civilziations
-                    </NavLink>
-                </li>
+                    <!-- Profile -->
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
+                            <!-- onclick="ToggleProfileNav"-->
+                            <span class="oi oi-person" aria-hidden="true"></span> Profile
+                            <span class="badge rounded-pill badge-notification bg-danger">@ListedProfiles.Count</span>
+                        </NavLink>
+                    </li>
 
-                <!-- Profile -->
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
-                        <!-- onclick="ToggleProfileNav"-->
-                        <span class="oi oi-person" aria-hidden="true"></span> Profile
-                        <span class="badge rounded-pill badge-notification bg-danger">@ListedProfiles.Count</span>
-                    </NavLink>
-                </li>
-
-                <!-- Leaderboard -->
-                <li class="nav-item">
-                    <NavLink class="nav-link" Match="NavLinkMatch.All" href="leaderboard">
-                        <span class="oi oi-graph" aria-hidden="true"></span> Leaderboard
-                    </NavLink>
-                </li>
-            </ul>
+                    <!-- Leaderboard -->
+                    <li class="nav-item">
+                        <NavLink class="nav-link" Match="NavLinkMatch.All" href="leaderboard">
+                            <span class="oi oi-graph" aria-hidden="true"></span> Leaderboard
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
 
 
 @code {
