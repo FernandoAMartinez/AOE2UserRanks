@@ -1,11 +1,13 @@
 ﻿@inherits LayoutComponentBase
+@inject Services.IStringServices stringService
+@inject ILocalStorageService localStorage
 
 <div>
     <TopNavBar />
 </div>
 
-<div class="container-fluid">
-    <div class="main bg-dark text-white">
+<div class="container-fluid bg-dark">
+    <div class="main  text-white">
         <div class="w-100 p-3 pt-3"></div>
         <div class="content mt-sm-5 mt-lg-5 bg-dark text-white">
             @Body
@@ -21,3 +23,16 @@
     </div>
 </div>
 
+@code{
+    [Inject] protected Services.IStringServices ApiStrings { get; set; }
+
+    private Models.GeneralData GeneralData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var storedStrings = await localStorage.GetItemAsync<GeneralData>("strings_en");
+        if (storedStrings == null) GeneralData = await ApiStrings.GetStringsAsync("en");
+        else GeneralData = storedStrings;
+        await localStorage.SetItemAsync<GeneralData>("strings_en", GeneralData);
+    }
+}
