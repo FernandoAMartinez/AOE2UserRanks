@@ -22,16 +22,23 @@ else
                         <div class="col">
                             <span class="float-left">#@currentProfile.Rank</span>
                         </div>
-                        <div class="col-8">
-                            <img class="img-fluid rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
-                            @currentProfile.Name
-                        </div>
+                        @*<div class="col-8">
+                                <img class="img-fluid rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
+                                @currentProfile.Name
+                            </div>*@
                         <div class="col form-check form-switch">
                             <div class="float-right">
                                 <input class="form-check-input" type="checkbox" value="" id="userSelected" checked="@pinnedProfile" @onchange="EventArgs => { IsProfilePinned(EventArgs.Value); }" />
                                 <label class="form-check-label" for="userSelected">Pin</label>
                             </div>
                         </div>
+
+                        <div class="w-100" />
+                        <div class="col">
+                            <img class="img-fluid rounded" src="https://www.countryflags.io/@currentProfile.Country/flat/32.png">
+                            @currentProfile.Name
+                        </div>
+
                     </div>
                 </div>
             </div>
