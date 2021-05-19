@@ -68,10 +68,10 @@ else
                                 @l.Leaderboard.Select(x => x.Rating).First()
                             </td>
                             <td>
-                                @l.Leaderboard.Select(x => x.Rating).First()
+                                @l.Leaderboard.Select(x => x.Wins).First()
                             </td>
                             <td>
-                                @l.Leaderboard.Select(x => x.Wins).First()
+                                @l.Leaderboard.Select(x => x.Losses).First()
                             </td>
                         </RowTemplate>
                     </DatagridView>
@@ -98,7 +98,7 @@ else
                 <div class="row">
                     @for (int i = 1; i < 9; i++)
                     {
-                        <div class="col-3">
+                        <div class="col-3 h-50">
                             <div class="card">
                                 <!-- Change Color -->
                                 @switch (i)
